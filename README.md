@@ -120,6 +120,7 @@ HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
     DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener());
     ```
     ...
+
 ----
 # 关于作者
 * 本人是一个IT屌丝，首先感谢广大为开源事业奉献的大神们，深受你们的感染，后续我也将会做一些开源项目，为开源行业尽点绵薄之力。感兴趣的童鞋欢迎Star和Fork，望大家多多指教~
