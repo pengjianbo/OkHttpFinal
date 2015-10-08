@@ -6,6 +6,15 @@
 * JSON反射轻松拿到结果
 * ……
 
+#下载OkHttpFinal
+下载这个[JAR](https://github.com/FinalTeam/OkHttpFinal/downloads) 或者通过Gradle抓取:
+
+```gradle
+compile 'cn.finalteam:okhttpfinal:1.0.4'
+#带下载管理
+compile 'cn.finalteam:okhttpfinal-dm:1.0.4'
+```
+    
 # OkHttpFinal使用方法：
 ## OkHttpFinal接口请求：
 ```java
@@ -121,7 +130,37 @@ HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
     ```
     ...
 
-----
-# 关于作者
-* 本人是一个IT屌丝，首先感谢广大为开源事业奉献的大神们，深受你们的感染，后续我也将会做一些开源项目，为开源行业尽点绵薄之力。感兴趣的童鞋欢迎Star和Fork，望大家多多指教~
-* 大家需要哪些库都可以邮件与我Email：<pengjianbosoft@gmail.com>，有时间我将尽力满足大家的需求。
+#代码混淆
+```properties
+#--------------- BEGIN: GSON ----------
+-keepattributes Signature
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+#--------------- END: GSON ----------
+#--------------- BEGIN: okhttp ----------
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+#--------------- END: okhttp ----------
+#--------------- BEGIN: okio ----------
+-keep class sun.misc.Unsafe { *; }
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okio.**
+#--------------- END: okio ----------
+#--------------- BEGIN: DbHelper ----------
+-keep class * extends java.lang.annotation.Annotation { *; }
+#--------------- END: DbHelper ----------
+#--------------- BEGIN: 数据库模型 ----------
+-keep class cn.paojiao.okhttpfinal.* {*;}
+-keep class * extends cn.finalteam.okhttpfinal.dm.DownloadInfo { *; }
+#请求模型
+-keep class * extends cn.finalteam.okhttpfinal.ApiResponse { *; }
+#--------------- END: 数据库模型 ----------
+```

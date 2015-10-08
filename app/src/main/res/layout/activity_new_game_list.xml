@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <GridView
+            android:id="@+id/gv_game"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="3"
+            />
+    </cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayout>
+</LinearLayout>

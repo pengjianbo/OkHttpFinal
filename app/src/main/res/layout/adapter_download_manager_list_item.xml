@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:longClickable="false"
+    >
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_margin="8dp"
+        android:clickable="false">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"/>
+
+        <ProgressBar
+            android:id="@+id/number_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_toRightOf="@id/iv_icon"
+            android:layout_toLeftOf="@+id/tv_operate"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_toRightOf="@id/iv_icon"
+            android:layout_above="@id/number_progress_bar"/>
+
+        <TextView
+            android:id="@+id/tv_operate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/theme_color"
+            android:text="继续"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/tv_download_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toRightOf="@id/iv_icon"
+            android:layout_below="@id/number_progress_bar"
+            android:textColor="@color/theme_color"/>
+
+        <TextView
+            android:id="@+id/tv_download_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_below="@id/number_progress_bar"
+            android:layout_toLeftOf="@id/tv_operate"
+            android:textColor="@color/theme_color"
+            />
+
+        <TextView
+            android:id="@+id/tv_download_scale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toRightOf="@id/tv_download_speed"
+            android:layout_below="@id/number_progress_bar"
+            android:textColor="@color/theme_color"
+            android:layout_marginLeft="8dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/theme_color">
+        <TextView
+            android:id="@+id/tv_game_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="详情"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="15dp"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:drawablePadding="4dp"
+            android:drawableTop="@mipmap/ic_game_detail"
+            android:layout_alignParentBottom="true"/>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="15dp"
+            android:textSize="13sp"
+            android:drawablePadding="4dp"
+            android:textColor="#FFFFFF"
+            android:drawableTop="@mipmap/ic_delete"
+            android:layout_toRightOf="@id/tv_game_detail"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+</LinearLayout>

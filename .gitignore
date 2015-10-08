@@ -1,3 +1,10 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
 # Created by https://www.gitignore.io
 
 ### Android ###
@@ -47,7 +54,7 @@ gradle-app.setting
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
 *.iml
-OkHttpFinal.iml
+app.iml
 ## Directory-based project format:
 .idea/
 # if you remove the above rule, at least ignore the following:
