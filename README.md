@@ -15,6 +15,8 @@ compile 'cn.finalteam:okhttpfinal:1.0.5'
 compile 'cn.finalteam:okhttpfinal-dm:1.0.5'
 ```
 ##DEMO部分截图
+Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
+
 ![](images/device-2015-10-09-143623.jpg) ![](images/device-2015-10-09-143803.jpg)   
 # OkHttpFinal使用方法：
 ## OkHttpFinal接口请求：
