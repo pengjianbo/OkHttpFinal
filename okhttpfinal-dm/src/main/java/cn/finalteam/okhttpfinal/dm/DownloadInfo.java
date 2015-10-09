@@ -13,7 +13,7 @@ import cn.finalteam.sqlitefinal.sqlite.FinderLazyLoader;
  * Date:15/8/22 下午5:11
  */
 @Table(name = "DownloadInfo")
-public class DownloadInfo extends BaseDownloadInfo{
+public class DownloadInfo extends BaseDownloadInfo implements Comparable<DownloadInfo>{
 
     //==============State=================
     public static final int WAIT = 0;//等待
@@ -33,9 +33,6 @@ public class DownloadInfo extends BaseDownloadInfo{
     private long totalLength;//总大小
     @Column(column = "downloadLength")
     private long downloadLength;//已下载大小
-
-    @Finder(valueColumn = "id", targetColumn = "parentId")
-    private FinderLazyLoader<BaseDownloadInfo> childModel;//用于具体项目扩展字段产生关联关系
 
     @Transient
     private long networkSpeed;//下载速度
@@ -90,14 +87,6 @@ public class DownloadInfo extends BaseDownloadInfo{
         this.downloadLength = downloadLength;
     }
 
-    public FinderLazyLoader<BaseDownloadInfo> getChildModel() {
-        return childModel;
-    }
-
-    public void setChildModel(FinderLazyLoader<BaseDownloadInfo> childModel) {
-        this.childModel = childModel;
-    }
-
     public long getNetworkSpeed() {
         return networkSpeed;
     }
@@ -123,5 +112,13 @@ public class DownloadInfo extends BaseDownloadInfo{
             }
         }
         return false;
+    }
+
+    @Override
+    public int compareTo(DownloadInfo another) {
+        if ( another == null ) {
+            return 0;
+        }
+        return Integer.compare(getId(), another.getId());
     }
 }

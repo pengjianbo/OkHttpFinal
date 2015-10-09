@@ -5,8 +5,10 @@ import android.widget.GridView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 import cn.finalteam.okhttpfinal.HttpRequest;
 import cn.finalteam.okhttpfinal.RequestParams;
+import cn.finalteam.okhttpfinal.dm.DownloadInfo;
 import cn.finalteam.okhttpfinal.sample.adapter.NewGameListAdapter;
 import cn.finalteam.okhttpfinal.sample.http.Api;
 import cn.finalteam.okhttpfinal.sample.http.MyBaseHttpRequestCallback;
@@ -14,6 +16,7 @@ import cn.finalteam.okhttpfinal.sample.http.model.GameInfo;
 import cn.finalteam.okhttpfinal.sample.http.model.NewGameResponse;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayout;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayoutDirection;
+import cn.finalteam.toolsfinal.Base64Utils;
 import cn.finalteam.toolsfinal.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +68,7 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
                     Toast.makeText(getBaseContext(), newGameResponse.getMsg(), Toast.LENGTH_SHORT).show();
                 }
 
-                if ( newGameResponse.getGameList() != null && newGameResponse.getGameList().size() > 0 ) {
+                if (newGameResponse.getGameList() != null && newGameResponse.getGameList().size() > 0) {
                     mSwipeLayout.setDirection(SwipeRefreshLayoutDirection.BOTH);
                 } else {
                     mSwipeLayout.setDirection(SwipeRefreshLayoutDirection.TOP);

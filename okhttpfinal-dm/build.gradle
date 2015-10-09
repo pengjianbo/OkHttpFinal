@@ -23,7 +23,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'cn.finalteam:sqlitefinal:+'
     compile project(':okhttpfinal')
-    compile 'com.jakewharton:butterknife:7.0.1'
 }
 
-apply from: 'https://raw.githubusercontent.com/FinalTeam/ToolsFinal/master/bintray.gradle'
+apply from: 'https://raw.githubusercontent.com/pengjianbo/ToolsFinal/master/bintray.gradle'

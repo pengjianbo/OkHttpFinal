@@ -132,16 +132,17 @@ public class DownloadManager implements DownloadNextTaskListener {
 
     /**
      * 下载一个任务
-     * @param downloadInfo
+     * @param url
      * @param listener
      */
-    public void addTask(DownloadInfo downloadInfo, DownloadListener listener) {
-        if ( downloadInfo == null || StringUtils.isEmpty(downloadInfo.getUrl())) {
-            Logger.d("DownloadInfo null or url null");
+    public void addTask(String url, DownloadListener listener) {
+        if ( StringUtils.isEmpty(url)) {
+            Logger.d("download url null");
             return;
         }
 
-        String url = downloadInfo.getUrl();
+        DownloadInfo downloadInfo = new DownloadInfo();
+        downloadInfo.setUrl(url);
         if( !hasTask(url) ) {
             downloadInfo.setTargetFolder(mTargetFolder);
             try {

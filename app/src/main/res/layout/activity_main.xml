@@ -25,4 +25,10 @@
         android:text="下载管理"
         />
 
+    <ListView
+        android:id="@+id/lv_game"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
 </LinearLayout>

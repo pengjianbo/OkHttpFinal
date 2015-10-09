@@ -25,4 +25,4 @@ dependencies {
     compile 'cn.finalteam:toolsfinal:+'
 }
 
-apply from: 'https://raw.githubusercontent.com/FinalTeam/ToolsFinal/master/bintray.gradle'
+apply from: 'https://raw.githubusercontent.com/pengjianbo/ToolsFinal/master/bintray.gradle'

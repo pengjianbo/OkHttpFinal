@@ -7,23 +7,23 @@
 * ……
 
 #下载OkHttpFinal
-下载这个[JAR](https://github.com/FinalTeam/OkHttpFinal/downloads) 或者通过Gradle抓取:
+下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.0.4'
+compile 'cn.finalteam:okhttpfinal:1.0.5'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.0.4'
+compile 'cn.finalteam:okhttpfinal-dm:1.0.5'
 ```
-    
+##DEMO部分截图
+![](images/device-2015-10-09-143623.jpg) ![](images/device-2015-10-09-143803.jpg)   
 # OkHttpFinal使用方法：
 ## OkHttpFinal接口请求：
 ```java
-RequestParams params = new RequestParams();
+RequestParams params = new RequestParams(this);
 params.put("username", mUserName);
 params.put("password", mPassword);
 params.put("file", file);
 params.put("image", inputstream);
-params.put(Constants.Params.HTTP_TASK_KEY, HTTP_TASK_KEY);
 params.putHeader("token", token);
 HttpRequest.request(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse>() {
 
@@ -58,30 +58,28 @@ HttpRequest.request(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse
     });
 ```
 ### Activity或Frament生命周期介绍后销毁页面所有正在执行的请求
+父Activity或父Fragment继承HttpCycleContext
 
 ```java
 //在BaseActivity或BaseFragment中添加字段
 protected final String HTTP_TASK_KEY = "HttpTaskKey_" + hashCode();
 
-//请求参数中添加key
-RequestParams params = new RequestParams();
-params.put(Constants.Params.HTTP_TASK_KEY, HTTP_TASK_KEY);
+@Override
+public String getHttpTaskKey() {
+    return HTTP_TASK_KEY;
+}
 
 //在BaseActivity和BaseFragment销毁方法中添加
 HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
 ```
-## OKHttpFinal下载文件：
+##OKHttpFinal下载文件：
 * 添加下载
 
     ```java
-    DownloadInfo dlTaskInfo = new DownloadInfo();
-    dlTaskInfo.setAppName(mGameData.getName());
-    dlTaskInfo.setUrl(url);
-    dlTaskInfo.setLogo(mGameData.getIconUrl());
-    dlTaskInfo.setPackageName(mGameData.getPackageName());
-    dlTaskInfo.setGameId(mGameData.getId());
-
-    DownloadManager.getInstance(this).addTask(dlTaskInfo, null);
+String url = gameInfo.getUrl();
+if (!DownloadManager.getInstance(this).hasTask(url)) {
+		DownloadManager.getInstance(this).addTask(url, null);
+	}
     ```
 * 暂停下载
 
@@ -164,3 +162,18 @@ HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
 -keep class * extends cn.finalteam.okhttpfinal.ApiResponse { *; }
 #--------------- END: 数据库模型 ----------
 ```
+
+License
+-------
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

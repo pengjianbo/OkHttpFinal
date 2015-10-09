@@ -1,8 +1,8 @@
 package cn.finalteam.okhttpfinal.sample.adapter;
 
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -12,10 +12,13 @@ import butterknife.ButterKnife;
 import cn.finalteam.okhttpfinal.dm.DownloadInfo;
 import cn.finalteam.okhttpfinal.dm.DownloadListener;
 import cn.finalteam.okhttpfinal.dm.DownloadManager;
+import cn.finalteam.okhttpfinal.sample.Constants;
 import cn.finalteam.okhttpfinal.sample.R;
 import cn.finalteam.okhttpfinal.sample.http.MyHttpCycleContext;
-import cn.finalteam.okhttpfinal.sample.model.MyDownloadInfo;
+import cn.finalteam.okhttpfinal.sample.model.GameDownloadInfo;
 import cn.finalteam.toolsfinal.ApkUtils;
+import cn.finalteam.toolsfinal.AppCacheUtils;
+import cn.finalteam.toolsfinal.Base64Utils;
 import cn.finalteam.toolsfinal.FileUtils;
 import cn.finalteam.toolsfinal.Logger;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -30,13 +33,13 @@ import java.util.Map;
  * Author:pengjianbo
  * Date:15/10/8 上午9:26
  */
-public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManagerListAdapter.FileViewHolder, MyDownloadInfo> {
+public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManagerListAdapter.FileViewHolder, DownloadInfo> {
 
     private View mLastShowBottomBar;
     private int mLastShowBottomBarPos = -1;
     private Map<String, MyDLTaskListener> mDListenerMap;
 
-    public DownloadManagerListAdapter(MyHttpCycleContext httpCycleContext, List<MyDownloadInfo> list) {
+    public DownloadManagerListAdapter(MyHttpCycleContext httpCycleContext, List<DownloadInfo> list) {
         super(httpCycleContext, list);
         this.mDListenerMap = new HashMap<>();
     }
@@ -49,9 +52,7 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
 
     @Override
     public void onBindViewHolder(FileViewHolder holder, int position) {
-        MyDownloadInfo myDownloadInfo = mList.get(position);
-        final DownloadInfo info = myDownloadInfo.getDownloadInfo();
-        holder.mTvTitle.setText(myDownloadInfo.getAppName());
+        final DownloadInfo info = mList.get(position);
         holder.mNumberProgressBar.setProgress(info.getProgress());
         if ( info.getTotalLength() > 0 ) {
             String downladScale = FileUtils.generateFileSize(info.getDownloadLength()) + "/"
@@ -59,19 +60,18 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
             holder.mTvDownloadScale.setText(downladScale);
         }
         if ( info.getState() == DownloadInfo.DOWNLOADING || info.getState() == DownloadInfo.WAIT) {
-            holder.mTvOperate.setText("暂停");
+            holder.mBtnOperate.setText("暂停");
             if ( info.getState() == DownloadInfo.WAIT ) {
                 holder.mTvDownloadState.setText("等待下载");
             } else {
                 holder.mTvDownloadState.setText("下载中");
             }
         } else if ( info.getState() == DownloadInfo.COMPLETE ) {
-            holder.mTvOperate.setText("安装");
+            holder.mBtnOperate.setText("安装");
             holder.mTvDownloadState.setText("下载完成");
         } else {
-            holder.mTvOperate.setText("继续");
+            holder.mBtnOperate.setText("继续");
             holder.mTvDownloadState.setText("已暂停");
-
         }
 
         if (mLastShowBottomBarPos == position) {
@@ -79,18 +79,24 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
         } else {
             holder.mLlBottomBar.setVisibility(View.GONE);
         }
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .showImageForEmptyUri(R.mipmap.ic_launcher)
-                .showImageOnFail(R.mipmap.ic_launcher)
-                .showImageOnLoading(R.mipmap.ic_launcher)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
 
-        ImageLoader.getInstance().displayImage( myDownloadInfo.getLogo(), holder.mIvIcon, options);
+        String key = String.format(Constants.GAME_DOWNLOAD_INFO, Base64Utils.encodeToString(info.getUrl().getBytes(), Base64Utils.DEFAULT));
+        GameDownloadInfo gameDownloadInfo = (GameDownloadInfo) AppCacheUtils.get(mHttpCycleContext.getContext()).getObject(key);
+        if ( gameDownloadInfo != null ) {
+            holder.mTvTitle.setText(gameDownloadInfo.getAppName());
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(R.mipmap.ic_launcher)
+                    .showImageOnFail(R.mipmap.ic_launcher)
+                    .showImageOnLoading(R.mipmap.ic_launcher)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .build();
+
+            ImageLoader.getInstance().displayImage(gameDownloadInfo.getLogo(), holder.mIvIcon, options);
+        }
         holder.view.setOnClickListener(new ItemClickListener(holder, position));
         holder.mTvCancel.setOnClickListener(new CancelClickListener(info));
-        holder.mTvOperate.setOnClickListener(new OperateButtonClickListener(info, holder));
+        holder.mBtnOperate.setOnClickListener(new OperateButtonClickListener(info, holder));
         holder.mTvGameDetail.setOnClickListener(new GameDetailClickListener(info));
 
         addDownloadListener(info, holder);
@@ -108,7 +114,7 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
         @Override
         public void onProgress(DownloadInfo downloadInfo) {
             super.onProgress(downloadInfo);
-            holder.mTvOperate.setText("暂停");
+            holder.mBtnOperate.setText("暂停");
             holder.mTvDownloadState.setText("下载中");
             holder.mNumberProgressBar.setProgress(downloadInfo.getProgress());
             String downladScale = FileUtils.generateFileSize(downloadInfo.getDownloadLength()) + "/"
@@ -120,7 +126,7 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
         @Override
         public void onError(DownloadInfo downloadInfo) {
             super.onError(downloadInfo);
-            holder.mTvOperate.setText("继续");
+            holder.mBtnOperate.setText("继续");
             holder.mTvDownloadState.setText("已暂停");
             notifyDataSetChanged();
         }
@@ -129,7 +135,7 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
         public void onFinish(DownloadInfo downloadInfo) {
             super.onFinish(downloadInfo);
             holder.mTvDownloadState.setText("下载完成");
-            holder.mTvOperate.setText("安装");
+            holder.mBtnOperate.setText("安装");
             notifyDataSetChanged();
         }
     }
@@ -153,16 +159,16 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
             if ( state == DownloadInfo.DOWNLOADING || state == DownloadInfo.WAIT) {
                 Logger.d("DownloadInfo.DOWNLOADING ");
                 DownloadManager.getInstance(mContext).stopTask(info.getUrl());
-                holder.mTvOperate.setText("继续");
+                holder.mBtnOperate.setText("继续");
 
             } else if ( state == DownloadInfo.COMPLETE ) {
                 Logger.d("DownloadInfo.COMPLETE ");
                 holder.mTvDownloadState.setText("下载完成");
-                holder.mTvOperate.setText("安装");
+                holder.mBtnOperate.setText("安装");
                 ApkUtils.install(mContext, new File(info.getTargetPath()));
             } else {
                 DownloadManager.getInstance(mContext).restartTask(info.getUrl());
-                holder.mTvOperate.setText("暂停");
+                holder.mBtnOperate.setText("暂停");
                 if ( DownloadManager.getInstance(mContext).getDownloadingSize() >= 3 ) {
                     holder.mTvDownloadState.setText("等待下载");
                 } else {
@@ -260,7 +266,7 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
         @Bind(R.id.iv_icon) ImageView mIvIcon;
         @Bind(R.id.number_progress_bar) ProgressBar mNumberProgressBar;
         @Bind(R.id.tv_title) TextView mTvTitle;
-        @Bind(R.id.tv_operate) TextView mTvOperate;
+        @Bind(R.id.btn_operate) Button mBtnOperate;
         @Bind(R.id.tv_download_scale) TextView mTvDownloadScale;
         @Bind(R.id.tv_download_state) TextView mTvDownloadState;
         @Bind(R.id.tv_game_detail) TextView mTvGameDetail;

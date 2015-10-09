@@ -1,30 +1,18 @@
 package cn.finalteam.okhttpfinal.sample.model;
 
-import cn.finalteam.okhttpfinal.dm.BaseDownloadInfo;
-import cn.finalteam.okhttpfinal.dm.DownloadInfo;
-import cn.finalteam.sqlitefinal.annotation.Column;
-import cn.finalteam.sqlitefinal.annotation.Foreign;
-import cn.finalteam.sqlitefinal.annotation.Table;
+import java.io.Serializable;
 
 /**
  * Desction:
  * Author:pengjianbo
  * Date:15/10/8 上午9:42
  */
-@Table(name = "GameDownloadList")
-public class MyDownloadInfo extends BaseDownloadInfo{
+public class GameDownloadInfo implements Serializable{
 
-    @Column(column = "logo")
     private String logo;
-    @Column(column = "appName")
     private String appName;
-    @Column(column = "packageName")
     private String packageName;
-    @Column(column = "gameId")
     private int gameId;
-
-    @Foreign(column = "parentId", foreign = "id")
-    private DownloadInfo downloadInfo;
 
     public String getLogo() {
         return logo;
@@ -58,11 +46,4 @@ public class MyDownloadInfo extends BaseDownloadInfo{
         this.gameId = gameId;
     }
 
-    public DownloadInfo getDownloadInfo() {
-        return downloadInfo;
-    }
-
-    public void setDownloadInfo(DownloadInfo downloadInfo) {
-        this.downloadInfo = downloadInfo;
-    }
 }
