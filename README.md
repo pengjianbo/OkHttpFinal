@@ -10,9 +10,9 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.0.5'
+compile 'cn.finalteam:okhttpfinal:1.0.6'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.0.5'
+compile 'cn.finalteam:okhttpfinal-dm:1.0.6'
 ```
 ##DEMO部分截图
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
