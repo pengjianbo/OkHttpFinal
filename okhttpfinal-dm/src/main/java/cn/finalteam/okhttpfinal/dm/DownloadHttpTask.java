@@ -125,7 +125,9 @@ public class DownloadHttpTask extends Thread {
         }
 
         if (response == null || !response.isSuccessful()){//提示网络异常
-            Logger.e("下载文件失败了~ code=" + response.code() + "url=" + url);
+            if ( response != null ) {
+                Logger.e("下载文件失败了~ code=" + response.code() + "url=" + url);
+            }
             resultCode = RESULT_NET_ERROR;
         } else {
 
