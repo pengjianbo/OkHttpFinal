@@ -25,13 +25,19 @@ public class RequestParams {
 
     protected HttpCycleContext httpCycleContext;
     private String httpTaskKey;
+    private boolean jsonBody;
 
     public RequestParams() {
-        init();
+        this(null);
     }
 
     public RequestParams(HttpCycleContext cycleContext) {
+        this(cycleContext, false);
+    }
+
+    public RequestParams(HttpCycleContext cycleContext, boolean jsonBody) {
         this.httpCycleContext = cycleContext;
+        this.jsonBody = jsonBody;
         init();
     }
 
@@ -188,7 +194,7 @@ public class RequestParams {
 
     public RequestBody getRequestBody() {
         RequestBody body = null;
-        if (fileParams.size() > 0) {
+        if (fileParams.size() > 0 || jsonBody) {
             boolean hasData = false;
 
             MultipartBuilder builder = new MultipartBuilder();
