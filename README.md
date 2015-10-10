@@ -7,7 +7,7 @@
 * ……
 
 #下载OkHttpFinal
-下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/downloads) 或者通过Gradle抓取:
+下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
 compile 'cn.finalteam:okhttpfinal:1.0.6'
