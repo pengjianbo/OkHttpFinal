@@ -5,6 +5,6 @@ package cn.finalteam.okhttpfinal;
  * Author:pengjianbo
  * Date:15/7/3 下午2:26
  */
-public interface ApiResponse {
+public class ApiResponse {
 
 }

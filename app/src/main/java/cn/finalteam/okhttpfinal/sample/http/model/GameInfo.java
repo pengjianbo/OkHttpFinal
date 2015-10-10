@@ -8,7 +8,7 @@ import cn.finalteam.okhttpfinal.ApiResponse;
  * Author:pengjianbo
  * Date:15/9/26 下午10:56
  */
-public class GameInfo implements ApiResponse {
+public class GameInfo extends ApiResponse {
 
     private int gameId;
     private String name;

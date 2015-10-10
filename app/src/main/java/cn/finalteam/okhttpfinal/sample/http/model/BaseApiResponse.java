@@ -7,7 +7,7 @@ import cn.finalteam.okhttpfinal.ApiResponse;
  * Author:pengjianbo
  * Date:15/9/29 下午4:08
  */
-public class BaseApiResponse implements ApiResponse {
+public class BaseApiResponse extends ApiResponse {
     private int code;
     private String msg;
 

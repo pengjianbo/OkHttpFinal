@@ -28,7 +28,7 @@ public class HttpRequest {
     }
 
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(url, params, callback, timeOut);
+        executeRequest("GET", url, params, callback, timeOut);
     }
 
     public static void post(String url) {
@@ -48,11 +48,11 @@ public class HttpRequest {
     }
 
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(url, params, callback, timeOut);
+        executeRequest("POST", url, params, callback, timeOut);
     }
 
-    private static void executeRequest(String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
-        HttpTask task = new HttpTask(url, params, callback, timeout);
+    private static void executeRequest(String method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+        HttpTask task = new HttpTask(method, url, params, callback, timeout);
         task.execute();
     }
 

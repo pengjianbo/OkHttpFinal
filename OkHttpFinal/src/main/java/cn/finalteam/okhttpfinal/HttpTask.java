@@ -15,6 +15,8 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.SocketTimeoutException;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Desction:Http请求Task
@@ -31,8 +33,10 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     private int timeout;
     private Headers headers;
     private String requestKey;
+    private String method;
 
-    public HttpTask(String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+    public HttpTask(String method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+        this.method = method;
         this.url = url;
         this.params = params;
         this.callback = callback;
@@ -64,13 +68,32 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         OkHttpClient client = OkHttpFactory.getOkHttpClientFactory(timeout);
         ResponseData responseData = new ResponseData();
 
-        RequestBody body = params.getRequestBody();
-
         //构建请求Request实例
         Request.Builder builder = new Request.Builder();
         builder.url(url).headers(headers);
-        if (body != null) {
+        if (TextUtils.equals(method, "POST")) {
+            RequestBody body = params.getRequestBody();
             builder.post(body);
+        } else {
+            Map<String, String> paramsMap = params.getUrlParams();
+            StringBuffer urlFull = new StringBuffer();
+            urlFull.append(url);
+            if ( urlFull.indexOf("?", 0) < 0 && paramsMap.size() > 0) {
+                urlFull.append("?");
+            }
+            Iterator<Map.Entry<String, String>> paramsIterator = paramsMap.entrySet().iterator();
+            while (paramsIterator.hasNext()){
+                Map.Entry<String, String> entry = paramsIterator.next();
+                String key = entry.getKey();
+                String value = entry.getValue();
+
+                urlFull.append(key).append("=").append(value);
+                if ( paramsIterator.hasNext() ) {
+                    urlFull.append("&");
+                }
+            }
+            url = urlFull.toString();
+            builder.get();
         }
         Request request = builder.build();
         if (Constants.DEBUG) {
