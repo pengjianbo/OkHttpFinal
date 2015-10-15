@@ -2,10 +2,9 @@ package cn.finalteam.okhttpfinal.dm;
 
 import android.text.TextUtils;
 import cn.finalteam.sqlitefinal.annotation.Column;
-import cn.finalteam.sqlitefinal.annotation.Finder;
+import cn.finalteam.sqlitefinal.annotation.Id;
 import cn.finalteam.sqlitefinal.annotation.Table;
 import cn.finalteam.sqlitefinal.annotation.Transient;
-import cn.finalteam.sqlitefinal.sqlite.FinderLazyLoader;
 
 /**
  * Desction:文件下载数据模型
@@ -13,7 +12,7 @@ import cn.finalteam.sqlitefinal.sqlite.FinderLazyLoader;
  * Date:15/8/22 下午5:11
  */
 @Table(name = "DownloadInfo")
-public class DownloadInfo extends BaseDownloadInfo implements Comparable<DownloadInfo>{
+public class DownloadInfo implements Comparable<DownloadInfo>{
 
     //==============State=================
     public static final int WAIT = 0;//等待
@@ -21,6 +20,9 @@ public class DownloadInfo extends BaseDownloadInfo implements Comparable<Downloa
     public static final int PAUSE = 2;//暂停
     public static final int COMPLETE = 3;//完成
 
+    @Id
+    @Column(column = "id")
+    private int id;
     @Column(column = "url")
     private String url;//文件URL
     @Column(column = "targetPath")
@@ -38,6 +40,14 @@ public class DownloadInfo extends BaseDownloadInfo implements Comparable<Downloa
     private long networkSpeed;//下载速度
     @Transient
     private int state = PAUSE;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUrl() {
         return url;
@@ -119,6 +129,9 @@ public class DownloadInfo extends BaseDownloadInfo implements Comparable<Downloa
         if ( another == null ) {
             return 0;
         }
-        return Integer.compare(getId(), another.getId());
+
+        int lhs = getId();
+        int rhs = another.getId();
+        return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
     }
 }
