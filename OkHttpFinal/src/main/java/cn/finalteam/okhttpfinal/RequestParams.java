@@ -98,16 +98,16 @@ public class RequestParams {
         try {
             boolean isPng = file.getName().lastIndexOf("png") > 0 || file.getName().lastIndexOf("PNG") > 0;
             if (isPng) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.PNG);
+                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.PNG.getContentType());
             }
 
             boolean isJpg = file.getName().lastIndexOf("jpg") > 0 || file.getName().lastIndexOf("JPG") > 0;
             if (isJpg) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.JPEG);
+                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.JPEG.getContentType());
             }
 
             if (!isPng && !isJpg) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.TEXT);
+                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.TEXT.getContentType());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -115,10 +115,10 @@ public class RequestParams {
     }
 
     public void put(String key, HttpFileInputStream httpFileInputStream) {
-        put(key, httpFileInputStream, ContentType.PNG);
+        put(key, httpFileInputStream, ContentType.PNG.getContentType());
     }
 
-    public void put(String key, HttpFileInputStream stream, ContentType contentType) {
+    public void put(String key, HttpFileInputStream stream, String contentType) {
         if (!StringUtils.isEmpty(key) && stream != null) {
             fileParams.put(key, new FileWrapper(stream.getInputStream(), stream.getName(), contentType, stream.getFileSize()));
         }
@@ -159,10 +159,10 @@ public class RequestParams {
     private static class FileWrapper {
         public InputStream inputStream;
         public String fileName;
-        public ContentType contentType;
+        public String contentType;
         private long fileSize;
 
-        public FileWrapper(InputStream inputStream, String fileName, ContentType contentType, long fileSize) {
+        public FileWrapper(InputStream inputStream, String fileName, String contentType, long fileSize) {
             this.inputStream = inputStream;
             this.fileName = fileName;
             this.contentType = contentType;

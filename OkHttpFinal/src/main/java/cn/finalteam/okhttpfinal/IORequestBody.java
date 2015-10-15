@@ -16,11 +16,11 @@ import okio.Source;
  */
 public class IORequestBody extends RequestBody {
 
-    private ContentType contentType;
+    private String contentType;
     private long fileSize;
     private InputStream inputStream;
 
-    public IORequestBody(ContentType contentType, long fileSize, InputStream inputStream) {
+    public IORequestBody(String contentType, long fileSize, InputStream inputStream) {
         this.contentType = contentType;
         this.fileSize = fileSize;
         this.inputStream = inputStream;
@@ -28,7 +28,7 @@ public class IORequestBody extends RequestBody {
 
     @Override
     public MediaType contentType() {
-        return MediaType.parse(contentType.getContentType());
+        return MediaType.parse(contentType);
     }
 
     @Override
