@@ -10,9 +10,9 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.0.7'
+compile 'cn.finalteam:okhttpfinal:1.0.7.3'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.0.7'
+compile 'cn.finalteam:okhttpfinal-dm:1.0.7.3'
 ```
 ##1.0.8更新内容
 * 上传文件进度
