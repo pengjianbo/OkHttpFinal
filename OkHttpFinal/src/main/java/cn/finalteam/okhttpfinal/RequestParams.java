@@ -16,6 +16,7 @@
 
 package cn.finalteam.okhttpfinal;
 
+import android.text.TextUtils;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MultipartBuilder;
@@ -151,27 +152,26 @@ public class RequestParams {
             value = "";
         }
 
-        if (!StringUtils.isEmpty(key)) {
+        if (!TextUtils.isEmpty(key)) {
             headerMap.put(key, value);
         }
     }
 
     public void putHeader(String key, int value) {
-        put(key, String.valueOf(value));
+        putHeader(key, String.valueOf(value));
     }
 
     public void putHeader(String key, float value) {
-        put(key, String.valueOf(value));
+        putHeader(key, String.valueOf(value));
     }
 
     public void putHeader(String key, double value) {
-        put(key, String.valueOf(value));
+        putHeader(key, String.valueOf(value));
     }
 
     public void putHeader(String key, boolean value) {
-        put(key, String.valueOf(value));
+        putHeader(key, String.valueOf(value));
     }
-
     private static class FileWrapper {
         public InputStream inputStream;
         public String fileName;
