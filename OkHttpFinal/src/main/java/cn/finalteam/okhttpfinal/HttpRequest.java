@@ -16,6 +16,8 @@
 
 package cn.finalteam.okhttpfinal;
 
+import cn.finalteam.toolsfinal.Logger;
+
 /**
  * Desction:http请求类
  * Author:pengjianbo
@@ -25,6 +27,7 @@ public class HttpRequest {
 
     public static void setDebug(boolean debug) {
         Constants.DEBUG = debug;
+        Logger.init("OkHttpFinal", debug);
     }
 
     public static void get(String url) {
