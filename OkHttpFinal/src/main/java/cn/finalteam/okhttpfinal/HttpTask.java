@@ -89,7 +89,9 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         builder.url(url).headers(headers);
         if (TextUtils.equals(method, "POST")) {
             RequestBody body = params.getRequestBody();
-            builder.post(body);
+            if ( body != null ) {
+                builder.post(body);
+            }
         } else {
             Map<String, String> paramsMap = params.getUrlParams();
             StringBuffer urlFull = new StringBuffer();
