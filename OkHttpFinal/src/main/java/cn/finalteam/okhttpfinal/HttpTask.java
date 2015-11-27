@@ -57,7 +57,9 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         this.params = params;
         this.callback = callback;
         this.timeout = timeout;
-
+        if ( params == null ) {
+            this.params = params = new RequestParams();
+        }
         this.requestKey = params.getHttpTaskKey();
         if ( StringUtils.isEmpty(requestKey) ) {
             requestKey = DEFAULT_HTTP_TASK_KEY;
