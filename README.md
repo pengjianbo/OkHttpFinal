@@ -32,7 +32,7 @@ params.put("password", mPassword);
 params.put("file", file);
 params.put("image", inputstream);
 params.putHeader("token", token);
-HttpRequest.request(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse>() {
+HttpRequest.post(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse>() {
 
         @Override
         public void onStart() {
