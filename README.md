@@ -14,6 +14,13 @@ compile 'cn.finalteam:okhttpfinal:1.0.7.4'
 #带下载管理
 compile 'cn.finalteam:okhttpfinal-dm:1.0.7.4'
 ```
+
+注意：
+
+* 直接使用OkHttpFinal jar时，必须先下载[ToolsFinal](https://github.com/pengjianbo/ToolsFinal/tree/master/downloads)框架和[OkHttp](https://github.com/square/okhttp)
+* 使用了下载管理还要先下载：[SQLiteFinal jar](https://github.com/pengjianbo/SQLiteFinal/tree/master/downloads) 
+* 推荐大家使用gradle方式
+
 ##1.0.8更新内容
 * 上传文件进度
 * https证书访问
