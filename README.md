@@ -13,6 +13,7 @@
 compile 'cn.finalteam:okhttpfinal:1.0.7.4'
 #带下载管理
 compile 'cn.finalteam:okhttpfinal-dm:1.0.7.4'
+compile 'cn.finalteam:sqlitefinal:1.0.3'
 ```
 
 注意：
