@@ -18,9 +18,9 @@ import cn.finalteam.okhttpfinal.sample.http.MyHttpCycleContext;
 import cn.finalteam.okhttpfinal.sample.model.GameDownloadInfo;
 import cn.finalteam.toolsfinal.ApkUtils;
 import cn.finalteam.toolsfinal.AppCacheUtils;
-import cn.finalteam.toolsfinal.Base64Utils;
 import cn.finalteam.toolsfinal.FileUtils;
 import cn.finalteam.toolsfinal.Logger;
+import cn.finalteam.toolsfinal.coder.Base64Coder;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import java.io.File;
@@ -80,8 +80,8 @@ public class DownloadManagerListAdapter extends CommonBaseAdapter<DownloadManage
             holder.mLlBottomBar.setVisibility(View.GONE);
         }
 
-        String key = String.format(Constants.GAME_DOWNLOAD_INFO, Base64Utils.encodeToString(info.getUrl().getBytes(), Base64Utils.DEFAULT));
-        GameDownloadInfo gameDownloadInfo = (GameDownloadInfo) AppCacheUtils.get(mHttpCycleContext.getContext()).getObject(key);
+        String key = String.format(Constants.GAME_DOWNLOAD_INFO, Base64Coder.encodeToString(info.getUrl().getBytes(), Base64Coder.DEFAULT));
+        GameDownloadInfo gameDownloadInfo = (GameDownloadInfo) AppCacheUtils.getInstance(mHttpCycleContext.getContext()).getObject(key);
         if ( gameDownloadInfo != null ) {
             holder.mTvTitle.setText(gameDownloadInfo.getAppName());
             DisplayImageOptions options = new DisplayImageOptions.Builder()

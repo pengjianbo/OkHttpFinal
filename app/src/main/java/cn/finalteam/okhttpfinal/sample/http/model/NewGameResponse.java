@@ -1,6 +1,5 @@
 package cn.finalteam.okhttpfinal.sample.http.model;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
@@ -8,16 +7,6 @@ import java.util.List;
  * Author:pengjianbo
  * Date:15/9/26 下午11:10
  */
-public class NewGameResponse extends BaseApiResponse{
+public class NewGameResponse extends BaseApiResponse<List<GameInfo>>{
 
-    @SerializedName("data")
-    private List<GameInfo> gameList;
-
-    public List<GameInfo> getGameList() {
-        return gameList;
-    }
-
-    public void setGameList(List<GameInfo> gameList) {
-        this.gameList = gameList;
-    }
 }

@@ -11,13 +11,17 @@ import cn.finalteam.okhttpfinal.sample.http.model.BaseApiResponse;
 public class MyBaseHttpRequestCallback<T extends BaseApiResponse> extends BaseHttpRequestCallback<T>{
 
     @Override
-    public void onSuccess(T t) {
+    protected void onSuccess(T t) {
         int code = t.getCode();
         if ( code == 1 ) {
-            super.onSuccess(t);
+            onLogicSuccess(t);
         } else {
             onLogicFailure(t);
         }
+    }
+
+    public void onLogicSuccess(T t) {
+
     }
 
     public void onLogicFailure(T t) {

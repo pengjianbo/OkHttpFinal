@@ -14,7 +14,7 @@ import cn.finalteam.okhttpfinal.sample.http.MyHttpCycleContext;
 import cn.finalteam.okhttpfinal.sample.model.GameDownloadInfo;
 import cn.finalteam.okhttpfinal.sample.model.GameInfo;
 import cn.finalteam.toolsfinal.AppCacheUtils;
-import cn.finalteam.toolsfinal.Base64Utils;
+import cn.finalteam.toolsfinal.coder.Base64Coder;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.List;
@@ -66,8 +66,8 @@ public class GameListAdapter extends CommonBaseAdapter<GameListAdapter.GameListH
                     info.setAppName(gameInfo.getGameName());
                     info.setLogo(gameInfo.getCoverUrl());
                     info.setPackageName(gameInfo.getPackageName());
-                    String key = String.format(Constants.GAME_DOWNLOAD_INFO, Base64Utils.encodeToString(url.getBytes(), Base64Utils.DEFAULT));
-                    AppCacheUtils.get(mContext).put(key, info);
+                    String key = String.format(Constants.GAME_DOWNLOAD_INFO, Base64Coder.encodeToString(url.getBytes(), Base64Coder.DEFAULT));
+                    AppCacheUtils.getInstance(mContext).put(key, info);
                 }
             }
         });

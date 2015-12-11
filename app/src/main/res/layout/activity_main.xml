@@ -25,6 +25,36 @@
         android:text="下载管理"
         />
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:id="@+id/pb_upload"
+        android:layout_gravity="center_horizontal"
+        />
+    <Button
+        android:id="@+id/btn_upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上传文件"
+        />
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:id="@+id/pb_download"
+        android:layout_gravity="center_horizontal"
+        />
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="简单文件下载"
+        />
+
     <ListView
         android:id="@+id/lv_game"
         android:layout_width="match_parent"

@@ -1,14 +1,13 @@
 package cn.finalteam.okhttpfinal.sample.http.model;
 
 import android.text.TextUtils;
-import cn.finalteam.okhttpfinal.ApiResponse;
 
 /**
  * Desction:
  * Author:pengjianbo
  * Date:15/9/26 下午10:56
  */
-public class GameInfo extends ApiResponse {
+public class GameInfo {
 
     private int gameId;
     private String name;

@@ -58,14 +58,14 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
             public void onSuccess(NewGameResponse newGameResponse) {
                 super.onSuccess(newGameResponse);
                 mPage = page + 1;
-                if (newGameResponse.getGameList() != null) {
-                    mGameList.addAll(newGameResponse.getGameList());
+                if (newGameResponse.getData() != null) {
+                    mGameList.addAll(newGameResponse.getData());
                     mNewGameListAdapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getBaseContext(), newGameResponse.getMsg(), Toast.LENGTH_SHORT).show();
                 }
 
-                if (newGameResponse.getGameList() != null && newGameResponse.getGameList().size() > 0) {
+                if (newGameResponse.getData() != null && newGameResponse.getData().size() > 0) {
                     mSwipeLayout.setDirection(SwipeRefreshLayoutDirection.BOTH);
                 } else {
                     mSwipeLayout.setDirection(SwipeRefreshLayoutDirection.TOP);
