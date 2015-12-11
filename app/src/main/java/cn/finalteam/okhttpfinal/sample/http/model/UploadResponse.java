@@ -14,35 +14,12 @@
  *  limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal;
+package cn.finalteam.okhttpfinal.sample.http.model;
 
 /**
- * Desction:文件内容类型
+ * Desction:
  * Author:pengjianbo
- * Date:15/9/21 上午10:53
+ * Date:15/12/10 下午7:25
  */
-public enum ContentType {
-    TEXT("text/plain; charset=UTF-8"),
-    PNG("image/png; charset=UTF-8"),
-    JPEG("image/jpeg; charset=UTF-8");
-
-    private String contentType;
-
-    private ContentType(String contentType){
-        this.contentType = contentType;
-    }
-
-    /**
-     * @return the contentType
-     */
-    public String getContentType() {
-        return contentType;
-    }
-
-    /**
-     * @param contentType the contentType to set
-     */
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+public class UploadResponse extends BaseApiResponse<String> {
 }
