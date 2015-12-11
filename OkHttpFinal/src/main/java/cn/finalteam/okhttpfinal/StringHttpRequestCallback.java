@@ -17,10 +17,9 @@
 package cn.finalteam.okhttpfinal;
 
 /**
- * Desction:接口响应基类
+ * Desction:
  * Author:pengjianbo
- * Date:15/7/3 下午2:26
+ * Date:15/12/10 下午8:13
  */
-public class ApiResponse {
-
+public class StringHttpRequestCallback extends BaseHttpRequestCallback<String> {
 }

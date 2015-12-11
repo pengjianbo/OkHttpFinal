@@ -16,6 +16,7 @@
 
 package cn.finalteam.okhttpfinal;
 
+import com.google.gson.internal.$Gson$Types;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -24,14 +25,16 @@ import java.lang.reflect.Type;
  * Author:pengjianbo
  * Date:15/7/3 上午11:41
  */
-public class BaseHttpRequestCallback<T extends ApiResponse> {
+public class BaseHttpRequestCallback<T> {
 
     public static final int ERROR_RESPONSE_NULL = 1001;
     public static final int ERROR_RESPONSE_JSON_EXCEPTION = 1002;
     public static final int ERROR_RESPONSE_UNKNOWN = 1003;
     public static final int ERROR_RESPONSE_TIMEOUT = 1004;
+    protected Type mType;
 
     public BaseHttpRequestCallback() {
+        mType = getSuperclassTypeParameter(getClass());
     }
 
     public void onStart() {
@@ -40,28 +43,23 @@ public class BaseHttpRequestCallback<T extends ApiResponse> {
     public void onFinish() {
     }
 
-    public void onSuccess(T t) {
+    protected void onSuccess(T t) {
+    }
+
+    public void onProgress(int progress, long currentLength, long totalLength, boolean done){
     }
 
     public void onFailure(int errorCode, String msg) {
     }
 
-    public Class getModelClazz() {
-        return getGenericType(0);
+    static Type getSuperclassTypeParameter(Class<?> subclass){
+        Type superclass = subclass.getGenericSuperclass();
+        if (superclass instanceof Class){
+            throw new RuntimeException("Missing type parameter.");
+        }
+        ParameterizedType parameterized = (ParameterizedType) superclass;
+        return $Gson$Types.canonicalize(parameterized.getActualTypeArguments()[0]);
     }
 
-    private Class getGenericType(int index) {
-        Type genType = getClass().getGenericSuperclass();
-        if (!(genType instanceof ParameterizedType)) {
-            return Object.class;
-        }
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        if (index >= params.length || index < 0) {
-            throw new RuntimeException("Index outof bounds");
-        }
-        if (!(params[index] instanceof Class)) {
-            return Object.class;
-        }
-        return (Class) params[index];
-    }
+
 }

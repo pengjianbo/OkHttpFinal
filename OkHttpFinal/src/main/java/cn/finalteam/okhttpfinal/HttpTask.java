@@ -17,12 +17,15 @@
 package cn.finalteam.okhttpfinal;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import cn.finalteam.toolsfinal.JsonFormatUtils;
 import cn.finalteam.toolsfinal.JsonValidator;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -30,9 +33,12 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HostnameVerifier;
 
 /**
  * Desction:Http请求Task
@@ -46,84 +52,107 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     private String url;
     private RequestParams params;
     private BaseHttpRequestCallback callback;
-    private int timeout;
     private Headers headers;
     private String requestKey;
     private String method;
+    private OkHttpClient okHttpClient;
+    private OkHttpFinal okHttpFinal;
 
-    public HttpTask(String method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+    public HttpTask(String method, String url, RequestParams params, BaseHttpRequestCallback callback, long timeout) {
         this.method = method;
         this.url = url;
         this.params = params;
         this.callback = callback;
-        this.timeout = timeout;
-        if ( params == null ) {
+        if (params == null) {
             this.params = params = new RequestParams();
         }
         this.requestKey = params.getHttpTaskKey();
-        if ( StringUtils.isEmpty(requestKey) ) {
+        if (StringUtils.isEmpty(requestKey)) {
             requestKey = DEFAULT_HTTP_TASK_KEY;
         }
 
         //将请求的URL及参数组合成一个唯一请求
         HttpTaskHandler.getInstance().addTask(this.requestKey, this);
+
+        okHttpFinal = OkHttpFinal.getOkHttpFinal();
+        okHttpClient = okHttpFinal.getOkHttpClient();
+        HostnameVerifier hostnameVerifier = okHttpFinal.getHostnameVerifier();
+        if (hostnameVerifier != null) {
+            okHttpClient.setHostnameVerifier(hostnameVerifier);
+        }
+
+        if ( timeout == -1 ) {
+            long globalTimeout = okHttpFinal.getTimeout();
+            //设置请求时间
+            okHttpClient.setConnectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            okHttpClient.setWriteTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            okHttpClient.setReadTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+        } else {
+            //设置请求时间
+            okHttpClient.setConnectTimeout(timeout, TimeUnit.MILLISECONDS);
+            okHttpClient.setWriteTimeout(timeout, TimeUnit.MILLISECONDS);
+            okHttpClient.setReadTimeout(timeout, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if ( params.headerMap != null ) {
+        if (params.headerMap != null) {
             headers = Headers.of(params.headerMap);
         }
 
-        if ( callback != null ) {
+        if (callback != null) {
             callback.onStart();
         }
     }
 
     @Override
     protected ResponseData doInBackground(Void... voids) {
-        OkHttpClient client = OkHttpFactory.getOkHttpClientFactory(timeout);
-        ResponseData responseData = new ResponseData();
-
-        //构建请求Request实例
-        Request.Builder builder = new Request.Builder();
-        builder.url(url).headers(headers);
-        if (TextUtils.equals(method, "POST")) {
-            RequestBody body = params.getRequestBody();
-            if ( body != null ) {
-                builder.post(body);
-            }
-        } else {
-            Map<String, String> paramsMap = params.getUrlParams();
-            StringBuffer urlFull = new StringBuffer();
-            urlFull.append(url);
-            if ( urlFull.indexOf("?", 0) < 0 && paramsMap.size() > 0) {
-                urlFull.append("?");
-            }
-            Iterator<Map.Entry<String, String>> paramsIterator = paramsMap.entrySet().iterator();
-            while (paramsIterator.hasNext()){
-                Map.Entry<String, String> entry = paramsIterator.next();
-                String key = entry.getKey();
-                String value = entry.getValue();
-
-                urlFull.append(key).append("=").append(value);
-                if ( paramsIterator.hasNext() ) {
-                    urlFull.append("&");
-                }
-            }
-            url = urlFull.toString();
-            builder.get();
-        }
-        Request request = builder.build();
-        if (Constants.DEBUG) {
-            Logger.d("url=" + url + "?" + params.toString());
-        }
-        //执行请求
         Response response = null;
+        ResponseData responseData = new ResponseData();
         try {
-            response = client.newCall(request).execute();
+            //OkHttpClient client = OkHttpFactory.getOkHttpClientFactory(timeout);
+
+            //构建请求Request实例
+            Request.Builder builder = new Request.Builder();
+            builder.url(url).headers(headers);
+            if (TextUtils.equals(method, "POST")) {
+                RequestBody body = params.getRequestBody();
+                if (body != null) {
+                    builder.post(new ProgressRequestBody(body, callback));
+                }
+            } else {
+                Map<String, String> paramsMap = params.getUrlParams();
+                StringBuffer urlFull = new StringBuffer();
+                urlFull.append(url);
+                if (urlFull.indexOf("?", 0) < 0 && paramsMap.size() > 0) {
+                    urlFull.append("?");
+                }
+                Iterator<Map.Entry<String, String>> paramsIterator = paramsMap.entrySet().iterator();
+                while (paramsIterator.hasNext()) {
+                    Map.Entry<String, String> entry = paramsIterator.next();
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+
+                    urlFull.append(key).append("=").append(value);
+                    if (paramsIterator.hasNext()) {
+                        urlFull.append("&");
+                    }
+                }
+                url = urlFull.toString();
+                builder.get();
+            }
+            Request request = builder.build();
+            if (Constants.DEBUG) {
+                Logger.d("url=" + url + "?" + params.toString());
+            }
+            //执行请求
+            response = okHttpClient.newCall(request).execute();
         } catch (Exception e) {
+            if (Constants.DEBUG) {
+                Logger.e("Exception=", e);
+            }
             if (e instanceof SocketTimeoutException) {
                 responseData.setTimeout(true);
             } else if (e instanceof InterruptedIOException && TextUtils.equals(e.getMessage(),
@@ -146,7 +175,6 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             }
             responseData.setResponse(respBody);
             responseData.setHeaders(response.headers());
-
         } else {
             responseData.setResponseNull(true);
         }
@@ -166,7 +194,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             if (responseData.isSuccess()) {//成功的请求
                 String respBody = responseData.getResponse();
                 if (Constants.DEBUG) {
-                    Logger.d("url=" + url +  "\n result=" + JsonFormatUtils.formatJson(respBody));
+                    Logger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody));
                 }
                 parseResponseBody(respBody, callback);
             } else {//请求失败
@@ -209,13 +237,13 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
 
     /**
      * 解析响应数据
+     *
      * @param result 请求的response 内容
      * @param callback 请求回调
      */
     private void parseResponseBody(String result, BaseHttpRequestCallback callback) {
-
         //回调为空，不向下执行
-        if(callback == null){
+        if (callback == null) {
             return;
         }
 
@@ -223,26 +251,38 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_NULL, "result empty");
             return;
         }
-        ApiResponse response = null;
-        try {
-            Gson gson = new Gson();
-            Object obj = gson.fromJson(result, callback.getModelClazz());
-            if (obj instanceof ApiResponse) {
-                response = (ApiResponse) obj;
-            } else {
-                response = gson.fromJson(result, ApiResponse.class);
-            }
-        } catch (Exception e) {
-            Logger.e(e);
-        }
-        if (response != null) {
-            //默认超时
-            callback.onSuccess(response);
-            return;
+
+        final int sdk = Build.VERSION.SDK_INT;
+        Gson gson = null;
+        if (sdk >= 23) {
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                    .excludeFieldsWithModifiers(
+                            Modifier.FINAL,
+                            Modifier.TRANSIENT,
+                            Modifier.STATIC);
+            gson = gsonBuilder.create();
+        } else {
+            gson = new Gson();
         }
 
-        //接口请求失败
-        callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_JSON_EXCEPTION, "json exception");
-        return;
+        if (callback.mType == String.class) {
+            callback.onSuccess(result);
+        } else if ( callback.mType == JsonObject.class) {
+            callback.onSuccess(result);
+        } else {
+            try {
+                Object obj = gson.fromJson(result, callback.mType);
+                if (obj != null) {
+                    callback.onSuccess(obj);
+                    return;
+                }
+            } catch (Exception e) {
+                Logger.e(e);
+            }
+
+            //接口请求失败
+            callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_JSON_EXCEPTION, "json exception");
+        }
     }
+
 }
