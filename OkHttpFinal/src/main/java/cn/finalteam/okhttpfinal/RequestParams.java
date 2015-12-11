@@ -17,14 +17,13 @@
 package cn.finalteam.okhttpfinal;
 
 import android.text.TextUtils;
+import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.RequestBody;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONObject;
@@ -65,6 +64,19 @@ public class RequestParams {
 
         headerMap.put("charset", "UTF-8");
 
+
+        //添加公共参数
+        Map<String, String> commonParams = OkHttpFinal.getOkHttpFinal().getCommonParams();
+        if ( commonParams != null && commonParams.size() > 0 ) {
+            urlParams.putAll(commonParams);
+        }
+
+        //添加公共header
+        Map<String, String> commonHeader = OkHttpFinal.getOkHttpFinal().getCommonHeaderMap();
+        if ( commonHeader != null && commonHeader.size() > 0 ) {
+            headerMap.putAll(commonHeader);
+        }
+
         if ( httpCycleContext != null ) {
             httpTaskKey = httpCycleContext.getHttpTaskKey();
         }
@@ -103,6 +115,7 @@ public class RequestParams {
     public void put(String key, boolean value) {
         put(key, String.valueOf(value));
     }
+
     /**
      * @param key
      * @param file
@@ -112,32 +125,47 @@ public class RequestParams {
             return;
         }
 
-        try {
-            boolean isPng = file.getName().lastIndexOf("png") > 0 || file.getName().lastIndexOf("PNG") > 0;
-            if (isPng) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.PNG.getContentType());
-            }
+        boolean isPng = file.getName().lastIndexOf("png") > 0 || file.getName().lastIndexOf("PNG") > 0;
+        if (isPng) {
+            put(key, file, "image/png; charset=UTF-8");
+        }
 
-            boolean isJpg = file.getName().lastIndexOf("jpg") > 0 || file.getName().lastIndexOf("JPG") > 0;
-            if (isJpg) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.JPEG.getContentType());
-            }
+        boolean isJpg = file.getName().lastIndexOf("jpg") > 0 || file.getName().lastIndexOf("JPG") > 0;
+        if (isJpg) {
+            put(key, file, "image/jpeg; charset=UTF-8");
+        }
 
-            if (!isPng && !isJpg) {
-                put(key, new HttpFileInputStream(new FileInputStream(file), file.getName(), file.length()), ContentType.TEXT.getContentType());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        if (!isPng && !isJpg) {
+            put(key, new FileWrapper(file, null));
         }
     }
 
-    public void put(String key, HttpFileInputStream httpFileInputStream) {
-        put(key, httpFileInputStream, ContentType.PNG.getContentType());
+    public void put(String key, File file, String contentType) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return;
+        }
+
+        MediaType mediaType = null;
+        try {
+            mediaType = MediaType.parse(contentType);
+        } catch (Exception e){
+            Logger.e(e);
+        }
+
+        put(key, new FileWrapper(file, mediaType));
     }
 
-    public void put(String key, HttpFileInputStream stream, String contentType) {
-        if (!StringUtils.isEmpty(key) && stream != null) {
-            fileParams.put(key, new FileWrapper(stream.getInputStream(), stream.getName(), contentType, stream.getFileSize()));
+    public void put(String key, File file, MediaType mediaType) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return;
+        }
+
+        put(key, new FileWrapper(file, mediaType));
+    }
+
+    public void put(String key, FileWrapper fileWrapper) {
+        if (!StringUtils.isEmpty(key) && fileWrapper != null) {
+            fileParams.put(key, fileWrapper);
         }
     }
 
@@ -172,27 +200,6 @@ public class RequestParams {
     public void putHeader(String key, boolean value) {
         putHeader(key, String.valueOf(value));
     }
-    private static class FileWrapper {
-        public InputStream inputStream;
-        public String fileName;
-        public String contentType;
-        private long fileSize;
-
-        public FileWrapper(InputStream inputStream, String fileName, String contentType, long fileSize) {
-            this.inputStream = inputStream;
-            this.fileName = fileName;
-            this.contentType = contentType;
-            this.fileSize = fileSize;
-        }
-
-        public String getFileName() {
-            if (fileName != null) {
-                return fileName;
-            } else {
-                return "nofilename";
-            }
-        }
-    }
 
     public void clearMap() {
         urlParams.clear();
@@ -222,10 +229,10 @@ public class RequestParams {
 
             for (ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
                 FileWrapper file = entry.getValue();
-                if (file.inputStream != null) {
+                if (file != null) {
                     hasData = true;
-                    builder.addFormDataPart(entry.getKey(), file.getFileName(),
-                            new IORequestBody(file.contentType, file.fileSize, file.inputStream));
+                    builder.addFormDataPart(entry.getKey(), file.getFileName(), RequestBody.create(file.getMediaType(), file.getFile()));
+                    //builder.addFormDataPart(entry.getKey(), file.getFileName(), new IORequestBody(file.contentType, file.fileSize, file.inputStream));
                 }
             }
             if (hasData) {
