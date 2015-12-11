@@ -17,7 +17,7 @@
 package cn.finalteam.okhttpfinal.dm;
 
 import android.os.Message;
-import cn.finalteam.okhttpfinal.OkHttpFactory;
+import cn.finalteam.okhttpfinal.OkHttpFinal;
 import cn.finalteam.sqlitefinal.DbHelper;
 import cn.finalteam.sqlitefinal.exception.DbException;
 import cn.finalteam.sqlitefinal.sqlite.WhereBuilder;
@@ -67,7 +67,7 @@ public class DownloadHttpTask extends Thread {
         this.mDownloadInfo = downloadInfo;
         this.mDownloadUIHandler = downloadUIHandler;
         this.mDbHelper = dbHelper;
-        this.mOkHttpClient = OkHttpFactory.getOkHttpClientFactory(30000);
+        this.mOkHttpClient = OkHttpFinal.getOkHttpFinal().getOkHttpClient();
         this.mUpdateDbThread = new UpdateDownloadDbThread();
         this.mDownloadNextTaskListener = downloadNextTaskListener;
     }

@@ -17,6 +17,8 @@
 package cn.finalteam.okhttpfinal;
 
 import com.squareup.okhttp.OkHttpClient;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OkHttpFactory {
 
-    public static OkHttpClient getOkHttpClientFactory(int timeout) {
+    public static OkHttpClient getOkHttpClientFactory(long timeout) {
         OkHttpClient client = new OkHttpClient();
         //设置请求时间
         client.setConnectTimeout(timeout, TimeUnit.MILLISECONDS);
@@ -36,6 +38,8 @@ public class OkHttpFactory {
         client.setRetryOnConnectionFailure(false);
         //请求支持重定向
         client.setFollowRedirects(true);
+        //启用cookie
+        client.setCookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER));
 
         return client;
     }

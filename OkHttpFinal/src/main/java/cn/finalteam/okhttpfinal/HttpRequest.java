@@ -17,6 +17,8 @@
 package cn.finalteam.okhttpfinal;
 
 import cn.finalteam.toolsfinal.Logger;
+import cn.finalteam.toolsfinal.StringUtils;
+import java.io.File;
 
 /**
  * Desction:http请求类
@@ -42,8 +44,14 @@ public class HttpRequest {
         get(url, null, callback);
     }
 
+    /**
+     * Get请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        get(url, params, callback, Constants.REQ_TIMEOUT);
+        get(url, params, callback, -1);
     }
 
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
@@ -62,17 +70,38 @@ public class HttpRequest {
         post(url, null, callback);
     }
 
+    /**
+     * Post请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        post(url, params, callback, Constants.REQ_TIMEOUT);
+        post(url, params, callback, -1);
     }
 
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
         executeRequest("POST", url, params, callback, timeOut);
     }
 
+    /**
+     * 下载文件
+     * @param url
+     * @param target 保存的文件
+     * @param callback
+     */
+    public static void download(String url, File target, FileDownloadCallback callback) {
+        if (!StringUtils.isEmpty(url) && target != null) {
+            FileDownloadTask task = new FileDownloadTask(url, target, callback);
+            task.execute();
+        }
+    }
+
     private static void executeRequest(String method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
-        HttpTask task = new HttpTask(method, url, params, callback, timeout);
-        task.execute();
+        if (!StringUtils.isEmpty(url)) {
+            HttpTask task = new HttpTask(method, url, params, callback, timeout);
+            task.execute();
+        }
     }
 
 }
