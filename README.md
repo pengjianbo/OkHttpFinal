@@ -1,79 +1,78 @@
+![](images/okhttpfinal.jpg)
+
 # OkHttpFinal简介
 * 简化[OkHttp](https://github.com/square/okhttp)使用
 * 支持Activity和Fragment生命周期结束后终止请求
 * 添加了DownloadManager功能
 * 下载多事件回调
-* JSON反射轻松拿到结果
+* 支持返回bean对象
+* 支持返回json String数据
+* 支持返回JsonObject对象
+* 支持https请求
+* 支持https证书访问
+* 支持文件上传
+* 支持全局params
+* 支持全局header
 * ……
 
 #下载OkHttpFinal
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.0.7.4'
+compile 'cn.finalteam:okhttpfinal:1.1.0'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.0.7.4'
+compile 'cn.finalteam:okhttpfinal-dm:1.1.0'
+```
+注意：使用1.1.0之前的带下载管理在加上
+
+```java
 compile 'cn.finalteam:sqlitefinal:1.0.3'
 ```
 
-注意：
+##eclipse使用
+下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra) (如果你没使用下载管理SQLiteFinal.jar不需要添加)
 
-* 直接使用OkHttpFinal jar时，必须先下载[ToolsFinal](https://github.com/pengjianbo/ToolsFinal/tree/master/downloads)框架和[OkHttp](https://github.com/square/okhttp)
-* 使用了下载管理还要先下载：[SQLiteFinal jar](https://github.com/pengjianbo/SQLiteFinal/tree/master/downloads) 
-* 推荐大家使用gradle方式
-
-##1.0.8更新内容
+##1.1.0更新内容
 * 上传文件进度
+* 支持https
 * https证书访问
+* 简单文件下载功能
+* 支持多种返回数据结构
+* 添加配置全局请求参数
+* 添加配置全局header
 * ……
 
 ##DEMO部分截图
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
 
-![](images/device-2015-10-09-143623.jpg) ![](images/device-2015-10-09-143803.jpg)   
+![](images/device-2015-12-11-094455.jpg) ![](images/device-2015-10-09-143623.jpg) ![](images/device-2015-10-09-143803.jpg) 
 # OkHttpFinal使用方法：
-## OkHttpFinal接口请求：
+## 请求接口
+### 1、在你的Application中添加全局配置（可选）
+在这里可以配置：公共请求参数、公共header、请求证书、timeout
+
 ```java
-RequestParams params = new RequestParams(this);
-params.put("username", mUserName);
-params.put("password", mPassword);
-params.put("file", file);
-params.put("image", inputstream);
-params.putHeader("token", token);
-HttpRequest.post(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse>() {
-
-        @Override
-        public void onStart() {
-            super.onStart();
-            buildProgressDialog().show();
-        }
-
-        @Override
-        public void onSuccess(LoginResponse loginResponse) {
-            super.onSuccess(loginResponse);
-            toast("登录成功");
-        }
-
-        @Override
-        public void onFailed(LoginResponse loginResponse) {
-            super.onFailed(loginResponse);
-            toast(loginResponse.getMessage());
-        }
-
-        @Override
-        public void onException(int errorCode, String msg) {
-            super.onException(errorCode, msg);
-            toast("网络异常~，请检查你的网络是否连接后再试");
-        }
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            dismissProgressDialog();
-        }
-    });
+Map<String, String> commonParamMap = new HashMap<>();
+Map<String, String> commonHeaderMap = new HashMap<>();
+OkHttpFinal okHttpFinal = new OkHttpFinal.Builder()
+        .setCommenParams(commonParamMap)
+        .setCommenHeader(commonHeaderMap)
+        .setTimeout(Constants.REQ_TIMEOUT)
+        //.setCertificates(...)
+        //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
+		.build();
+okHttpFinal.init();
 ```
-### Activity或Frament生命周期介绍后销毁页面所有正在执行的请求
+### 3、开启DEBUG
+
+```java
+HttpRequest.setDebug(true);
+```
+
+### 4、Activity或Frament生命周期介绍后销毁页面所有正在执行的请求（建议配置）
 父Activity或父Fragment继承HttpCycleContext
+
+* 注：如果你的的adapger中也有请求网络操作，adapter的请求网络的生命周期也应该是fragment或activity的生命周期，大家可以参考demo
 
 ```java
 //在BaseActivity或BaseFragment中添加字段
@@ -84,64 +83,204 @@ public String getHttpTaskKey() {
     return HTTP_TASK_KEY;
 }
 
-//在BaseActivity和BaseFragment销毁方法中添加
+//在BaseActivity(onDestroy)和BaseFragment(onDestroyView)销毁方法中添加
 HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
 ```
-##OKHttpFinal下载文件：
+
+### 5、发起请求：
+请求回调有很多种包括BaseHttpRequestCallback\<T\>、JsonHttpRequestCallback、StringHttpRequestCallback看大家的喜好选择
+
+* 注意：onSuccess这里只是网络请求成功了（也就是服务器返回JSON合法）没有没有分装具体的业务成功与失败，大家可以参考demo去分装自己公司业务请求成功与失败
+
+```java
+RequestParams params = new RequestParams(this);
+params.put("username", mUserName);
+params.put("password", mPassword);
+params.put("file", file);
+params.put("image", inputstream);
+params.putHeader("token", token);
+HttpRequest.post(Api.LOGIN, params, new BaseHttpRequestCallback<LoginResponse>() {
+
+//请求网络前
+@Override
+public void onStart() {
+	buildProgressDialog().show();
+}
+
+//这里只是网络请求成功了（也就是服务器返回JSON合法）没有没有分装具体的业务成功与失败，大家可以参考demo去分装自己公司业务请求成功与失败
+@Override
+protected void onSuccess(LoginResponse loginResponse) {
+	toast(loginResponse.getMsg());
+}
+
+//请求失败（服务返回非法JSON、服务器异常、网络异常）
+@Override
+public void onFailure(int errorCode, String msg) {
+	toast("网络异常~，请检查你的网络是否连接后再试");
+}
+ 
+//请求网络结束   
+@Override
+public void onFinish() {
+    dismissProgressDialog();
+}
+```
+
+##文件上传
+
+```java
+File file = new File("/sdcard/DCIM/GalleryFinal/IMG20151201200821.jpg");
+String userId = "3097424";
+RequestParams params = new RequestParams(this);
+params.put("file", file);
+params.put("userId", userId);
+params.put("token", "NTCrWFKFCn1r8iaV3K0fLz2gX9LZS1SR");
+params.put("udid", "f0ba33e4de8a657d");
+params.put("sign", "39abfa9af6f6e3c8776b01ae612bc14c");
+params.put("version", "2.1.0");
+params.put("mac", "8c:3a:e3:5e:68:e0");
+params.put("appId", "paojiao_aiyouyou20");
+params.put("imei", "359250051610200");
+params.put("model", "Nexus 5");
+params.put("cid", "paojiao");
+String fileuploadUri = "http://uploader.paojiao.cn/avatarAppUploader?userId=" + userId;
+
+HttpRequest.post(fileuploadUri, params, new BaseHttpRequestCallback<UploadResponse>() {
+    @Override
+    public void onSuccess(UploadResponse uploadResponse) {
+        super.onSuccess(uploadResponse);
+        Toast.makeText(getBaseContext(), "上传成功：" + uploadResponse.getData(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFailure(int errorCode, String msg) {
+        super.onFailure(errorCode, msg);
+        Toast.makeText(getBaseContext(), "上传失败", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProgress(int progress, long currentLength, long totalLength, boolean done) {
+        mPbUpload.setProgress(progress);
+    }
+});
+```
+
+##简单文件下载（没有下载管理功能）
+
+```java
+String url = "http://219.128.78.33/apk.r1.market.hiapk.com/data/upload/2015/05_20/14/com.speedsoftware.rootexplorer_140220.apk";
+File saveFile = new File("/sdcard/rootexplorer_140220.apk");
+HttpRequest.download(url, saveFile, new FileDownloadCallback() {
+    //开始下砸
+    @Override 
+    public void onStart() {
+        super.onStart();
+    }
+
+	//下载进度
+    @Override
+    public void onProgress(int progress) {
+        super.onProgress(progress);
+        mPbDownload.setProgress(progress);
+    }
+
+	//下载失败
+    @Override 
+    public void onFailure() {
+        super.onFailure();
+        Toast.makeText(getBaseContext(), "下载失败", Toast.LENGTH_SHORT).show();
+    }
+
+	//下载完成（下载成功）
+    @Override 
+    public void onDone() {
+        super.onDone();
+        Toast.makeText(getBaseContext(), "下载成功", Toast.LENGTH_SHORT).show();
+    }
+});
+```
+
+##OKHttpFinal下载文件（下载管理）：
 * 添加下载
 
-    ```java
+```java
 String url = gameInfo.getUrl();
 if (!DownloadManager.getInstance(this).hasTask(url)) {
-		DownloadManager.getInstance(this).addTask(url, null);
-	}
-    ```
+	DownloadManager.getInstance(this).addTask(url, null);
+}
+```
 * 暂停下载
 
-    ```java
-    DownloadManager.getInstance(this).stopTask(info.getUrl());
-    ```
+```java
+DownloadManager.getInstance(this).stopTask(info.getUrl());
+```
 * 继续下载
 
-    ```java
-    DownloadManager.getInstance(this).restartTask(info.getUrl());
-    ```
+```java
+DownloadManager.getInstance(this).restartTask(info.getUrl());
+```
 * 添加事件回调
 
-    ```java
-    DownloadManager.getInstance(this).addTaskListener(url, new DownloadListener() {
-        @Override
-        public void onProgress(DownloadInfo downloadInfo) {
-            super.onProgress(downloadInfo);
-            holder.mTvOperate.setText("暂停");
-            holder.mTvDownloadState.setText("下载中");
-            holder.mNumberProgressBar.setProgress(downloadInfo.getProgress());
-            String downladScale = StringUtils.generateFileSize(downloadInfo.getDownloadLength()) + "/"
-                    + StringUtils.generateFileSize(downloadInfo.getTotalLength());
-            holder.mTvDownloadScale.setText(downladScale);
-            holder.mTvDownloadSpeed.setText(StringUtils.generateFileSize(downloadInfo.getNetworkSpeed()));
-        }
+```java
+DownloadManager.getInstance(this).addTaskListener(url, new DownloadListener() {
+    @Override
+    public void onProgress(DownloadInfo downloadInfo) {
+        super.onProgress(downloadInfo);
+        holder.mTvOperate.setText("暂停");
+        holder.mTvDownloadState.setText("下载中");
+        holder.mNumberProgressBar.setProgress(downloadInfo.getProgress());
+        String downladScale = StringUtils.generateFileSize(downloadInfo.getDownloadLength()) + "/"
+                + StringUtils.generateFileSize(downloadInfo.getTotalLength());
+        holder.mTvDownloadScale.setText(downladScale);
+        holder.mTvDownloadSpeed.setText(StringUtils.generateFileSize(downloadInfo.getNetworkSpeed()));
+    }
 
-        @Override
-        public void onError(DownloadInfo downloadInfo) {
-            super.onError(downloadInfo);
-            holder.mTvOperate.setText("继续");
-            holder.mTvDownloadState.setText("已暂停");
-        }
+    @Override
+    public void onError(DownloadInfo downloadInfo) {
+        super.onError(downloadInfo);
+        holder.mTvOperate.setText("继续");
+        holder.mTvDownloadState.setText("已暂停");
+    }
 
-        @Override
-        public void onFinish(DownloadInfo downloadInfo) {
-            super.onFinish(downloadInfo);
-            holder.mTvDownloadState.setText("下载完成");
-            holder.mTvOperate.setText("安装");
-        }
-    });
-    ```
+    @Override
+    public void onFinish(DownloadInfo downloadInfo) {
+        super.onFinish(downloadInfo);
+        holder.mTvDownloadState.setText("下载完成");
+        holder.mTvOperate.setText("安装");
+    }
+});
+```
 * 添加全局事件回调
-    ```java
-    DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener());
-    ```
-    ...
+
+```java
+DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener());
+```
+...
+
+# 权限
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+
+<!--在SDCard中创建与删除文件权限  -->
+<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+<!-- 往SDCard写入数据权限 -->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<!--  从SDCard读取数据权限 -->
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+```
+如果你用到了toosfinal的一些功能请添加以下权限：
+
+```xml
+<!--读取设备信息权限-->
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!--获取WIFI权限-->
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<!--获取手机任务信息（进程,app列表）-->
+<uses-permission android:name="android.permission.GET_TASKS"/>
+<!-- 检查是否wifi网络 (CrashHanler保存日志信息用到) -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
 
 #代码混淆
 ```properties
@@ -171,12 +310,19 @@ if (!DownloadManager.getInstance(this).hasTask(url)) {
 -keep class * extends java.lang.annotation.Annotation { *; }
 #--------------- END: DbHelper ----------
 #--------------- BEGIN: 数据库模型 ----------
--keep class cn.paojiao.okhttpfinal.* {*;}
+-keep class cn.finalteam.okhttpfinal.* {*;}
 -keep class * extends cn.finalteam.okhttpfinal.dm.DownloadInfo { *; }
-#请求模型
--keep class * extends cn.finalteam.okhttpfinal.ApiResponse { *; }
 #--------------- END: 数据库模型 ----------
 ```
+
+非常感谢广大童鞋们提得意见和想法，大家对项目或项目文档哪些意见都可以发邮箱给我
+
+#关于作者
+我们正在组建开源团队，来满足大家的在工作中的需求，有什么需求或功能都可以加QQ提，如果大家对这个需求或功能都比较喜欢，我团队就会采纳。
+
+* **QQ:**172340021   
+* **QQ群:**218801658  
+* **Email:**<pengjianbo@finalteam.cn>
 
 License
 -------
