@@ -41,6 +41,7 @@ public class OkHttpFinal {
     private List<InputStream> mCertificateList;
     private HostnameVerifier mHostnameVerifier;
     private long mTimeout;
+    private boolean mDebug;
 
     private static OkHttpFinal mOkHttpFinal;
 
@@ -50,6 +51,7 @@ public class OkHttpFinal {
         this.mCertificateList = builder.mCertificateList;
         this.mHostnameVerifier = builder.mHostnameVerifier;
         this.mTimeout = builder.mTimeout;
+        this.mDebug = builder.mDebug;
     }
 
     public void init() {
@@ -59,6 +61,7 @@ public class OkHttpFinal {
             httpsCerManager.setCertificates(mCertificateList);
         }
 
+        HttpRequest.setDebug(mDebug);
         mOkHttpFinal = this;
     }
 
@@ -68,6 +71,7 @@ public class OkHttpFinal {
         private List<InputStream> mCertificateList;
         private HostnameVerifier mHostnameVerifier;
         private long mTimeout;
+        private boolean mDebug;
 
         public Builder() {
             this.mCommonParamsMap = new HashMap<>();
@@ -81,7 +85,15 @@ public class OkHttpFinal {
          * @return
          */
         public Builder setCommenParams(Map<String, String> paramsMap){
-            this.mCommonParamsMap = paramsMap;
+            for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+                if ( !StringUtils.isEmpty(entry.getKey()) ) {
+                    String value = "";
+                    if ( !StringUtils.isEmpty(entry.getValue()) ) {
+                        value = entry.getValue();
+                    }
+                    mCommonParamsMap.put(entry.getKey(), value);
+                }
+            }
             return this;
         }
 
@@ -91,7 +103,15 @@ public class OkHttpFinal {
          * @return
          */
         public Builder setCommenHeader(Map<String, String> headerMap) {
-            this.mCommonHeaderMap = headerMap;
+            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                if ( !StringUtils.isEmpty(entry.getKey()) ) {
+                    String value = "";
+                    if ( !StringUtils.isEmpty(entry.getValue()) ) {
+                        value = entry.getValue();
+                    }
+                    mCommonHeaderMap.put(entry.getKey(), value);
+                }
+            }
             return this;
         }
 
@@ -122,6 +142,16 @@ public class OkHttpFinal {
 
         public Builder setHostnameVerifier(HostnameVerifier hostnameVerifier) {
             this.mHostnameVerifier = hostnameVerifier;
+            return this;
+        }
+
+        /**
+         * 设置调试开关
+         * @param debug
+         * @return
+         */
+        public Builder setDebug(boolean debug) {
+            this.mDebug = debug;
             return this;
         }
 
