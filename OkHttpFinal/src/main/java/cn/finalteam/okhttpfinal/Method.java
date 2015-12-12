@@ -14,19 +14,13 @@
  *  limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.https;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
+package cn.finalteam.okhttpfinal;
 
 /**
  * Desction:
  * Author:pengjianbo
- * Date:15/12/10 上午10:28
+ * Date:15/12/11 下午11:22
  */
-public class SkirtHttpsHostnameVerifier implements HostnameVerifier {
-    @Override
-    public boolean verify(String hostname, SSLSession session) {
-        return true;
-    }
+enum  Method {
+    GET,POST,PUT,DELETE,HEAD,PATCH,
 }

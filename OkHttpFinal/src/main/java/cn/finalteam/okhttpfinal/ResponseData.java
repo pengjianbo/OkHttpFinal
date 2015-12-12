@@ -23,7 +23,7 @@ import com.squareup.okhttp.Headers;
  * Author:pengjianbo
  * Date:15/7/3 上午11:16
  */
-public class ResponseData {
+class ResponseData {
 
     private boolean responseNull;//http是否无响应
     private boolean timeout;//是否请求超时

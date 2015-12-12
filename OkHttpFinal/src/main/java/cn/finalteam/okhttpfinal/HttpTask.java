@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 
@@ -54,11 +52,11 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     private BaseHttpRequestCallback callback;
     private Headers headers;
     private String requestKey;
-    private String method;
+    private Method method;
     private OkHttpClient okHttpClient;
     private OkHttpFinal okHttpFinal;
 
-    public HttpTask(String method, String url, RequestParams params, BaseHttpRequestCallback callback, long timeout) {
+    public HttpTask(Method method, String url, RequestParams params, BaseHttpRequestCallback callback, long timeout) {
         this.method = method;
         this.url = url;
         this.params = params;
@@ -113,36 +111,46 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         ResponseData responseData = new ResponseData();
         try {
             //OkHttpClient client = OkHttpFactory.getOkHttpClientFactory(timeout);
-
+            String srcUrl = url;
             //构建请求Request实例
             Request.Builder builder = new Request.Builder();
-            builder.url(url).headers(headers);
-            if (TextUtils.equals(method, "POST")) {
-                RequestBody body = params.getRequestBody();
-                if (body != null) {
-                    builder.post(new ProgressRequestBody(body, callback));
-                }
-            } else {
-                Map<String, String> paramsMap = params.getUrlParams();
-                StringBuffer urlFull = new StringBuffer();
-                urlFull.append(url);
-                if (urlFull.indexOf("?", 0) < 0 && paramsMap.size() > 0) {
-                    urlFull.append("?");
-                }
-                Iterator<Map.Entry<String, String>> paramsIterator = paramsMap.entrySet().iterator();
-                while (paramsIterator.hasNext()) {
-                    Map.Entry<String, String> entry = paramsIterator.next();
-                    String key = entry.getKey();
-                    String value = entry.getValue();
 
-                    urlFull.append(key).append("=").append(value);
-                    if (paramsIterator.hasNext()) {
-                        urlFull.append("&");
+            switch (method) {
+                case GET:
+                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    builder.get();
+                    break;
+                case DELETE:
+                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    builder.delete();
+                    break;
+                case HEAD:
+                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    builder.head();
+                    break;
+                case POST:
+                    RequestBody body = params.getRequestBody();
+                    if (body != null) {
+                        builder.post(new ProgressRequestBody(body, callback));
                     }
-                }
-                url = urlFull.toString();
-                builder.get();
+                    break;
+                case PUT:
+                    RequestBody bodyPut = params.getRequestBody();
+                    if (bodyPut != null) {
+                        builder.put(bodyPut);
+                    }
+                    break;
+
+                case PATCH:
+                    RequestBody bodyPatch = params.getRequestBody();
+                    if (bodyPatch != null) {
+                        builder.patch(bodyPatch);
+                    }
+                    break;
+
             }
+
+            builder.url(url).tag(srcUrl).headers(headers);
             Request request = builder.build();
             if (Constants.DEBUG) {
                 Logger.d("url=" + url + "?" + params.toString());

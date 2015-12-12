@@ -55,7 +55,7 @@ public class HttpRequest {
     }
 
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest("GET", url, params, callback, timeOut);
+        executeRequest(Method.GET, url, params, callback, timeOut);
     }
 
     public static void post(String url) {
@@ -81,7 +81,125 @@ public class HttpRequest {
     }
 
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest("POST", url, params, callback, timeOut);
+        executeRequest(Method.POST, url, params, callback, timeOut);
+    }
+
+    public static void put(String url) {
+        put(url, null, null);
+    }
+
+    public static void put(String url, RequestParams params) {
+        put(url, params, null);
+    }
+
+    public static void put(String url, BaseHttpRequestCallback callback) {
+        put(url, null, callback);
+    }
+
+    /**
+     * put请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
+    public static void put(String url, RequestParams params, BaseHttpRequestCallback callback) {
+        put(url, params, callback, -1);
+    }
+
+    public static void put(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
+        executeRequest(Method.PUT, url, params, callback, timeOut);
+    }
+
+    public static void delete(String url) {
+        delete(url, null, null);
+    }
+
+    public static void delete(String url, RequestParams params) {
+        delete(url, params, null);
+    }
+
+    public static void delete(String url, BaseHttpRequestCallback callback) {
+        delete(url, null, callback);
+    }
+
+    /**
+     * delete请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
+    public static void delete(String url, RequestParams params, BaseHttpRequestCallback callback) {
+        delete(url, params, callback, -1);
+    }
+
+    public static void delete(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
+        executeRequest(Method.DELETE, url, params, callback, timeOut);
+    }
+
+    public static void head(String url) {
+        head(url, null, null);
+    }
+
+    public static void head(String url, RequestParams params) {
+        head(url, params, null);
+    }
+
+    public static void head(String url, BaseHttpRequestCallback callback) {
+        head(url, null, callback);
+    }
+
+    /**
+     * head请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
+    public static void head(String url, RequestParams params, BaseHttpRequestCallback callback) {
+        head(url, params, callback, -1);
+    }
+
+    public static void head(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
+        executeRequest(Method.HEAD, url, params, callback, timeOut);
+    }
+
+    public static void patch(String url) {
+        patch(url, null, null);
+    }
+
+    public static void patch(String url, RequestParams params) {
+        patch(url, params, null);
+    }
+
+    public static void patch(String url, BaseHttpRequestCallback callback) {
+        patch(url, null, callback);
+    }
+
+    /**
+     * patch请求 使用全局timeout
+     * @param url
+     * @param params
+     * @param callback
+     */
+    public static void patch(String url, RequestParams params, BaseHttpRequestCallback callback) {
+        patch(url, params, callback, -1);
+    }
+
+    public static void patch(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
+        executeRequest(Method.PATCH, url, params, callback, timeOut);
+    }
+
+    /**
+     * 取消请求
+     * @param url
+     */
+    public static void cancel(String url) {
+        if ( !StringUtils.isEmpty(url) ) {
+            try {
+                OkHttpFinal.getOkHttpFinal().getOkHttpClient().cancel(url);
+            } catch (Exception e){
+                Logger.e(e);
+            }
+        }
     }
 
     /**
@@ -97,7 +215,7 @@ public class HttpRequest {
         }
     }
 
-    private static void executeRequest(String method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+    private static void executeRequest(Method method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
         if (!StringUtils.isEmpty(url)) {
             HttpTask task = new HttpTask(method, url, params, callback, timeout);
             task.execute();

@@ -1,10 +1,13 @@
 ![](images/okhttpfinal.jpg)
 
 # OkHttpFinal简介
+一个对OkHttp封装的简单易用型HTTP请求和文件下载管理框架。
+
 * 简化[OkHttp](https://github.com/square/okhttp)使用
+* 支持GET,POST,PUT,DELETE,HEAD,PATCH谓词
 * 支持Activity和Fragment生命周期结束后终止请求
-* 添加了DownloadManager功能
-* 下载多事件回调
+* 支持Download Manager功能
+* 支持文件下载多事件回调
 * 支持返回bean对象
 * 支持返回json String数据
 * 支持返回JsonObject对象
@@ -13,6 +16,7 @@
 * 支持文件上传
 * 支持全局params
 * 支持全局header
+* 支持http cancel
 * ……
 
 #下载OkHttpFinal
@@ -23,6 +27,14 @@ compile 'cn.finalteam:okhttpfinal:1.1.0'
 #带下载管理
 compile 'cn.finalteam:okhttpfinal-dm:1.1.0'
 ```
+
+**1.2.0 Beta版**
+
+```gradle
+compile 'cn.finalteam:okhttpfinal:1.2.0-beta'
+#带下载管理
+compile 'cn.finalteam:okhttpfinal-dm:1.2.0-beta'
+```
 注意：使用1.1.0之前的带下载管理在加上
 
 ```java
@@ -32,15 +44,11 @@ compile 'cn.finalteam:sqlitefinal:1.0.3'
 ##eclipse使用
 下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra) (如果你没使用下载管理SQLiteFinal.jar不需要添加)
 
-##1.1.0更新内容
-* 上传文件进度
-* 支持https
-* https证书访问
-* 简单文件下载功能
-* 支持多种返回数据结构
-* 添加配置全局请求参数
-* 添加配置全局header
-* ……
+##1.2.0更新内容
+* 添加PUT,DELETE,HEAD,PATCH谓词
+* 支持http cancel
+* 全局配置debug模式
+* 添加防止公共params和公共header为Null情况
 
 ##DEMO部分截图
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
@@ -314,6 +322,23 @@ DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener
 -keep class * extends cn.finalteam.okhttpfinal.dm.DownloadInfo { *; }
 #--------------- END: 数据库模型 ----------
 ```
+
+#更新日志
+##V1.2.0
+* 添加PUT,DELETE,HEAD,PATCH谓词
+* 支持http cancel
+* 全局配置debug模式
+* 添加防止公共params和公共header为Null情况
+
+##V1.1.0
+* 上传文件进度
+* 支持https
+* https证书访问
+* 简单文件下载功能
+* 支持多种返回数据结构
+* 添加配置全局params
+* 添加配置全局header
+* ……
 
 非常感谢广大童鞋们提的意见和想法，大家对项目或项目文档哪些意见都可以发邮箱给我
 
