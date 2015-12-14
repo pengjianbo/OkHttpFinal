@@ -17,15 +17,13 @@
 package cn.finalteam.okhttpfinal;
 
 import android.os.AsyncTask;
-import android.os.Build;
 import android.text.TextUtils;
 import cn.finalteam.toolsfinal.JsonFormatUtils;
 import cn.finalteam.toolsfinal.JsonValidator;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -33,7 +31,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
@@ -137,17 +134,16 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 case PUT:
                     RequestBody bodyPut = params.getRequestBody();
                     if (bodyPut != null) {
-                        builder.put(bodyPut);
+                        builder.put(new ProgressRequestBody(bodyPut, callback));
                     }
                     break;
 
                 case PATCH:
                     RequestBody bodyPatch = params.getRequestBody();
                     if (bodyPatch != null) {
-                        builder.patch(bodyPatch);
+                        builder.put(new ProgressRequestBody(bodyPatch, callback));
                     }
                     break;
-
             }
 
             builder.url(url).tag(srcUrl).headers(headers);
@@ -260,26 +256,20 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             return;
         }
 
-        final int sdk = Build.VERSION.SDK_INT;
-        Gson gson = null;
-        if (sdk >= 23) {
-            GsonBuilder gsonBuilder = new GsonBuilder()
-                    .excludeFieldsWithModifiers(
-                            Modifier.FINAL,
-                            Modifier.TRANSIENT,
-                            Modifier.STATIC);
-            gson = gsonBuilder.create();
-        } else {
-            gson = new Gson();
-        }
-
         if (callback.mType == String.class) {
             callback.onSuccess(result);
-        } else if ( callback.mType == JsonObject.class) {
-            callback.onSuccess(result);
+            return;
+        } else if ( callback.mType == JSONObject.class) {
+            try {
+                callback.onSuccess(JSON.parseObject(result));
+                return;
+            } catch (Exception e) {
+                Logger.e(e);
+            }
         } else {
             try {
-                Object obj = gson.fromJson(result, callback.mType);
+                Object obj = JSON.parseObject(result, callback.mType);
+                //Object obj = gson.fromJson(result, callback.mType);
                 if (obj != null) {
                     callback.onSuccess(obj);
                     return;
@@ -287,10 +277,9 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             } catch (Exception e) {
                 Logger.e(e);
             }
-
-            //接口请求失败
-            callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_JSON_EXCEPTION, "json exception");
         }
+        //接口请求失败
+        callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_JSON_EXCEPTION, "json exception");
     }
 
 }
