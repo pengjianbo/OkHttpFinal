@@ -16,12 +16,17 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.google.gson.JsonObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * Desction:
  * Author:pengjianbo
  * Date:15/12/10 下午8:14
  */
-public class JsonHttpRequestCallback extends BaseHttpRequestCallback<JsonObject> {
+public class JsonHttpRequestCallback extends BaseHttpRequestCallback<JSONObject> {
+
+    public JsonHttpRequestCallback() {
+        super();
+        mType = JSONObject.class;
+    }
 }
