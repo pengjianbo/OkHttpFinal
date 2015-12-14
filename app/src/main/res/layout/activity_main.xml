@@ -5,17 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:padding="8dp"
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/btn_api_demo"
+        android:id="@+id/btn_api_bean"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="接口demo"
+        android:textAllCaps="false"
+        android:text="接口解析Bean"
+        />
+
+    <Button
+        android:id="@+id/btn_api_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="接口String回调"
+        />
+
+    <Button
+        android:id="@+id/btn_api_jsonobject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="接口JSONObject回调"
         />
 
     <Button
@@ -25,14 +39,6 @@
         android:text="下载管理"
         />
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:max="100"
-        android:id="@+id/pb_upload"
-        android:layout_gravity="center_horizontal"
-        />
     <Button
         android:id="@+id/btn_upload"
         android:layout_width="match_parent"
@@ -40,14 +46,6 @@
         android:text="上传文件"
         />
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:max="100"
-        android:id="@+id/pb_download"
-        android:layout_gravity="center_horizontal"
-        />
     <Button
         android:id="@+id/btn_download"
         android:layout_width="match_parent"
@@ -55,6 +53,26 @@
         android:text="简单文件下载"
         />
 
+    <Button
+        android:id="@+id/btn_other_funcation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="其他功能"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#cccccc"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="游戏列表"
+        android:textColor="#000000"
+        />
     <ListView
         android:id="@+id/lv_game"
         android:layout_width="match_parent"

@@ -38,6 +38,7 @@ public class IApplication extends Application {
                 .setCommenParams(commonParamMap)
                 .setCommenHeader(commonHeaderMap)
                 .setTimeout(Constants.REQ_TIMEOUT)
+                .setDebug(true)
                 //.setCertificates(...)
                 //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
 

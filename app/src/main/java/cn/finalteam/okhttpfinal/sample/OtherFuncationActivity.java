@@ -14,14 +14,29 @@
  *  limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.sample.http;
+package cn.finalteam.okhttpfinal.sample;
 
-import cn.finalteam.okhttpfinal.BaseHttpRequestCallback;
+import android.os.Bundle;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import us.feras.mdv.MarkdownView;
 
 /**
  * Desction:
  * Author:pengjianbo
- * Date:15/12/10 下午8:10
+ * Date:15/12/14 下午4:30
  */
-public class StringHttpRequestCallback extends BaseHttpRequestCallback<String> {
+public class OtherFuncationActivity extends BaseActivity {
+
+    @Bind(R.id.mv_code)
+    MarkdownView mMvCode;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_other_function);
+        ButterKnife.bind(this);
+
+        mMvCode.loadMarkdownFile("file:///android_asset/OtherFuncation.md", "file:///android_asset/css-themes/classic.css");
+    }
 }

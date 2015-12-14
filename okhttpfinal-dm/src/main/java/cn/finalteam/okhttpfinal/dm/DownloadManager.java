@@ -18,7 +18,6 @@ package cn.finalteam.okhttpfinal.dm;
 
 import android.content.Context;
 import android.text.TextUtils;
-import cn.finalteam.okhttpfinal.Constants;
 import cn.finalteam.sqlitefinal.DbHelper;
 import cn.finalteam.sqlitefinal.exception.DbException;
 import cn.finalteam.sqlitefinal.sqlite.WhereBuilder;
@@ -67,6 +66,9 @@ public class DownloadManager implements DownloadNextTaskListener {
     private Object mNextTaskLockObj = new Object();
     private Object mIteratorLock = new Object();
 
+    //下载管理目标文件夹
+    public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator;
+
     public DownloadManager(Context context) {
 
         mAllTasks = Collections.synchronizedList(new ArrayList());
@@ -79,7 +81,7 @@ public class DownloadManager implements DownloadNextTaskListener {
         mDownloadUIHandler = new DownloadUIHandler(mListenerListMap);
 
         //初始化目标Download保存目录
-        String folder = StorageUtils.getCacheDirectory(context).getAbsolutePath() + Constants.DM_TARGET_FOLDER;
+        String folder = StorageUtils.getCacheDirectory(context).getAbsolutePath() + DM_TARGET_FOLDER;
         if ( !new File(folder).exists() ) {
             FileUtils.makeFolders(folder);
         }

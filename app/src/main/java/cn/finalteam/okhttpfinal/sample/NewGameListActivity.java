@@ -1,6 +1,9 @@
 package cn.finalteam.okhttpfinal.sample;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridView;
 import android.widget.Toast;
 import butterknife.Bind;
@@ -17,6 +20,7 @@ import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayoutDirect
 import cn.finalteam.toolsfinal.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
+import us.feras.mdv.MarkdownView;
 
 /**
  * Desction:
@@ -31,6 +35,8 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
     List<GameInfo> mGameList;
     @Bind(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeLayout;
+    @Bind(R.id.mv_code)
+    MarkdownView mMvCode;
     private int mPage = 1;
 
     @Override
@@ -39,13 +45,34 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
         setContentView(R.layout.activity_new_game_list);
         ButterKnife.bind(this);
 
-        setTitle("游戏列表");
+        setTitle("接口解析Bean");
         mGameList = new ArrayList<>();
         mNewGameListAdapter = new NewGameListAdapter(this, mGameList);
         mGvGame.setAdapter(mNewGameListAdapter);
         mSwipeLayout.setDirection(SwipeRefreshLayoutDirection.BOTH);
         mSwipeLayout.setOnRefreshListener(this);
         requestData(mPage);
+
+        mMvCode.loadMarkdownFile("file:///android_asset/HttpRequestCallbackBean.md", "file:///android_asset/css-themes/classic.css");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_code, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if ( itemId == R.id.action_code ) {
+            if (mMvCode.getVisibility()== View.VISIBLE) {
+                mMvCode.setVisibility(View.GONE);
+            } else {
+                mMvCode.setVisibility(View.VISIBLE);
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestData(final int page) {
@@ -55,8 +82,7 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
         HttpRequest.post(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
 
             @Override
-            public void onSuccess(NewGameResponse newGameResponse) {
-                super.onSuccess(newGameResponse);
+            public void onLogicSuccess(NewGameResponse newGameResponse) {
                 mPage = page + 1;
                 if (newGameResponse.getData() != null) {
                     mGameList.addAll(newGameResponse.getData());
