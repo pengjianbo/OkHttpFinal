@@ -19,6 +19,7 @@ package cn.finalteam.okhttpfinal;
 import android.text.TextUtils;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -26,7 +27,6 @@ import com.squareup.okhttp.RequestBody;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.json.JSONObject;
 
 /**
  * Desction:Http请求参数类
@@ -34,6 +34,7 @@ import org.json.JSONObject;
  * Date:15/7/3 上午11:05
  */
 public class RequestParams {
+
     protected ConcurrentHashMap<String, String> headerMap;
 
     protected ConcurrentHashMap<String, String> urlParams;
@@ -41,19 +42,15 @@ public class RequestParams {
 
     protected HttpCycleContext httpCycleContext;
     private String httpTaskKey;
-    private boolean jsonBody;
+    private JSONObject jsonBody;
+    private RequestBody requestBody;
 
     public RequestParams() {
         this(null);
     }
 
     public RequestParams(HttpCycleContext cycleContext) {
-        this(cycleContext, false);
-    }
-
-    public RequestParams(HttpCycleContext cycleContext, boolean jsonBody) {
         this.httpCycleContext = cycleContext;
-        this.jsonBody = jsonBody;
         init();
     }
 
@@ -206,20 +203,26 @@ public class RequestParams {
         fileParams.clear();
     }
 
-    public String toJSON() {
-        String rsStr = new JSONObject(urlParams).toString();
-        return rsStr;
+    public void setJSONObject(JSONObject jsonBody) {
+        this.jsonBody = jsonBody;
+    }
+
+    public void setCustomRequestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
     }
 
     public Map<String, String> getUrlParams() {
         return urlParams;
     }
 
-    public RequestBody getRequestBody() {
+    protected RequestBody getRequestBody() {
         RequestBody body = null;
-        if (fileParams.size() > 0 || jsonBody) {
+        if (jsonBody != null) {
+            body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonBody.toJSONString());
+        } else if (requestBody != null) {
+            body = requestBody;
+        } else if (fileParams.size() > 0) {
             boolean hasData = false;
-
             MultipartBuilder builder = new MultipartBuilder();
             builder.type(MultipartBuilder.FORM);
             for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
@@ -232,7 +235,6 @@ public class RequestParams {
                 if (file != null) {
                     hasData = true;
                     builder.addFormDataPart(entry.getKey(), file.getFileName(), RequestBody.create(file.getMediaType(), file.getFile()));
-                    //builder.addFormDataPart(entry.getKey(), file.getFileName(), new IORequestBody(file.contentType, file.fileSize, file.inputStream));
                 }
             }
             if (hasData) {
