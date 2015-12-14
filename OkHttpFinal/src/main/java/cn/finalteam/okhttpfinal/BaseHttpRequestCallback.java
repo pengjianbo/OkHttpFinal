@@ -16,8 +16,6 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.google.gson.internal.$Gson$Types;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -34,7 +32,7 @@ public class BaseHttpRequestCallback<T> {
     protected Type mType;
 
     public BaseHttpRequestCallback() {
-        mType = getSuperclassTypeParameter(getClass());
+        mType = ClassTypeReflect.getModelClazz(getClass());
     }
 
     public void onStart() {
@@ -44,22 +42,21 @@ public class BaseHttpRequestCallback<T> {
     }
 
     protected void onSuccess(T t) {
+
     }
 
-    public void onProgress(int progress, long currentLength, long totalLength, boolean done){
+    /**
+     * 上传文件进度
+     * @param progress
+     * @param networkSpeed 网速
+     * @param done
+     */
+    public void onProgress(int progress, long networkSpeed, boolean done){
     }
 
     public void onFailure(int errorCode, String msg) {
     }
 
-    static Type getSuperclassTypeParameter(Class<?> subclass){
-        Type superclass = subclass.getGenericSuperclass();
-        if (superclass instanceof Class){
-            throw new RuntimeException("Missing type parameter.");
-        }
-        ParameterizedType parameterized = (ParameterizedType) superclass;
-        return $Gson$Types.canonicalize(parameterized.getActualTypeArguments()[0]);
-    }
 
 
 }

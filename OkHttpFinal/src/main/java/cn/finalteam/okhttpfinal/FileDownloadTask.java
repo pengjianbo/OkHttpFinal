@@ -31,13 +31,15 @@ import java.io.InputStream;
  * Author:pengjianbo
  * Date:15/12/10 下午10:45
  */
-public class FileDownloadTask extends AsyncTask<Void, Integer, Boolean> {
+public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
 
     private OkHttpClient okHttpClient;
     private OkHttpFinal okHttpFinal;
     private FileDownloadCallback callback;
     private String url;
     private File target;
+    //开始下载时间，用户计算加载速度
+    private long mPreviousTime;
 
     public FileDownloadTask(String url, File target, FileDownloadCallback callback) {
         this.url = url;
@@ -55,6 +57,7 @@ public class FileDownloadTask extends AsyncTask<Void, Integer, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        mPreviousTime = System.currentTimeMillis();
         if (callback != null) {
             callback.onStart();
         }
@@ -84,11 +87,20 @@ public class FileDownloadTask extends AsyncTask<Void, Integer, Boolean> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
+    protected void onProgressUpdate(Long... values) {
         super.onProgressUpdate(values);
-        if (callback != null) {
-            int progress = values[0];
-            callback.onProgress(progress);
+        if (callback != null && values != null && values.length >= 2) {
+            long sum = values[0];
+            long total = values[1];
+
+            int progress = (int) (sum * 100.0f / total);
+            //计算下载速度
+            long totalTime = (System.currentTimeMillis() - mPreviousTime)/1000;
+            if ( totalTime == 0 ) {
+                totalTime += 1;
+            }
+            long networkSpeed = sum / totalTime;
+            callback.onProgress(progress, networkSpeed);
         }
     }
 
@@ -124,7 +136,7 @@ public class FileDownloadTask extends AsyncTask<Void, Integer, Boolean> {
                 fos.write(buf, 0, len);
 
                 if (callback != null) {
-                    publishProgress((int) (sum * 100.0f / total));
+                    publishProgress(sum, total);
                 }
             }
             fos.flush();
