@@ -23,22 +23,9 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.1.0'
+compile 'cn.finalteam:okhttpfinal:1.2.0'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.1.0'
-```
-
-**1.2.0 Beta版**
-
-```gradle
-compile 'cn.finalteam:okhttpfinal:1.2.0-beta'
-#带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.2.0-beta'
-```
-注意：使用1.1.0之前的带下载管理在加上
-
-```java
-compile 'cn.finalteam:sqlitefinal:1.0.3'
+compile 'cn.finalteam:okhttpfinal-dm:1.2.0'
 ```
 
 ##eclipse使用
@@ -49,6 +36,10 @@ compile 'cn.finalteam:sqlitefinal:1.0.3'
 * 支持http cancel
 * 全局配置debug模式
 * 添加防止公共params和公共header为Null情况
+* RequestParams 添加setJSONObject方法（对application/json支持）
+* RequestParams 添加setCustomRequestBody方法
+* 计算上传/下载网速功能
+* ...
 
 ##DEMO部分截图
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
@@ -66,18 +57,14 @@ OkHttpFinal okHttpFinal = new OkHttpFinal.Builder()
         .setCommenParams(commonParamMap)
         .setCommenHeader(commonHeaderMap)
         .setTimeout(Constants.REQ_TIMEOUT)
+        .setDebug(true)
         //.setCertificates(...)
         //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
 		.build();
 okHttpFinal.init();
 ```
-### 3、开启DEBUG
 
-```java
-HttpRequest.setDebug(true);
-```
-
-### 4、Activity或Frament生命周期介绍后销毁页面所有正在执行的请求（建议配置）
+### 3、Activity或Frament生命周期结束后销毁页面所有正在执行的请求（建议配置）
 父Activity或父Fragment继承HttpCycleContext
 
 * 注：如果你的的adapger中也有请求网络操作，adapter的请求网络的生命周期也应该是fragment或activity的生命周期，大家可以参考demo
@@ -95,7 +82,7 @@ public String getHttpTaskKey() {
 HttpTaskHandler.getInstance().removeTask(HTTP_TASK_KEY);
 ```
 
-### 5、发起请求：
+### 4、发起请求：
 请求回调有很多种包括BaseHttpRequestCallback\<T\>、JsonHttpRequestCallback、StringHttpRequestCallback看大家的喜好选择
 
 * 注意：onSuccess这里只是网络请求成功了（也就是服务器返回JSON合法）没有没有分装具体的业务成功与失败，大家可以参考demo去分装自己公司业务请求成功与失败
@@ -167,7 +154,7 @@ HttpRequest.post(fileuploadUri, params, new BaseHttpRequestCallback<UploadRespon
     }
 
     @Override
-    public void onProgress(int progress, long currentLength, long totalLength, boolean done) {
+    public void onProgress(int progress, long networkSpeed, boolean done) {
         mPbUpload.setProgress(progress);
     }
 });
@@ -187,9 +174,10 @@ HttpRequest.download(url, saveFile, new FileDownloadCallback() {
 
 	//下载进度
     @Override
-    public void onProgress(int progress) {
-        super.onProgress(progress);
+    public void onProgress(int progress, long networkSpeed) {
+        super.onProgress(progress, networkSpeed);
         mPbDownload.setProgress(progress);
+        //String speed = FileUtils.generateFileSize(networkSpeed);
     }
 
 	//下载失败
@@ -324,13 +312,16 @@ DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener
 ```
 
 #更新日志
-##V1.2.0
+## V1.2.0
 * 添加PUT,DELETE,HEAD,PATCH谓词
 * 支持http cancel
 * 全局配置debug模式
 * 添加防止公共params和公共header为Null情况
+* RequestParams 添加setJSONObject方法（对application/json支持）
+* RequestParams 添加setCustomRequestBody方法
+* …… 
 
-##V1.1.0
+## V1.1.0
 * 上传文件进度
 * 支持https
 * https证书访问
@@ -343,8 +334,6 @@ DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener
 非常感谢广大童鞋们提的意见和想法，大家对项目或项目文档哪些意见都可以发邮箱给我
 
 #关于作者
-我们正在组建开源团队，来满足大家的在工作中的需求，有什么需求或功能都可以加QQ群提，如果大家对这个需求或功能都比较喜欢，我团队就会采纳。
-
 * **QQ:**172340021   
 * **QQ群:**218801658  
 * **Email:**<pengjianbo@finalteam.cn>
