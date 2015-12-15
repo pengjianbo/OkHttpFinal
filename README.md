@@ -28,6 +28,26 @@ compile 'cn.finalteam:okhttpfinal:1.2.0'
 compile 'cn.finalteam:okhttpfinal-dm:1.2.0'
 ```
 
+如果编译的时候出现 ![](images/error_build.png)这样的错误,请在你项目的build.gralde中加上以下语句
+
+```xml
+android {
+	packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/ASL2.0'
+    }
+}
+```
+
 ##eclipse使用
 下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra) (如果你没使用下载管理SQLiteFinal.jar不需要添加)
 
