@@ -23,12 +23,14 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.2.1'
+compile 'cn.finalteam:okhttpfinal:1.2.2'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.2.1'
+compile 'cn.finalteam:okhttpfinal-dm:1.2.2'
 ```
+**注意：**
 
-如果编译的时候出现 ![](images/error_build.png)这样的错误,请在你项目的build.gralde中加上以下语句
+* 1、OkHttpFinal内部使用的是fastjson android版本，如果开发者是本身已经使用了fastjson web版，建议开发者统一使用fastjson android版本
+* 如果编译的时候出现 ![](images/error_build.png)这样的错误,请在你项目的build.gralde中加上以下语句
 
 ```xml
 android {
@@ -332,6 +334,12 @@ DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener
 ```
 
 #更新日志
+## V1.2.2
+* 去掉json合法性验证
+
+## V1.2.1
+* fastjson gradle引入
+
 ## V1.2.0
 * 添加PUT,DELETE,HEAD,PATCH谓词
 * 支持http cancel

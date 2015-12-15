@@ -19,7 +19,6 @@ package cn.finalteam.okhttpfinal;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import cn.finalteam.toolsfinal.JsonFormatUtils;
-import cn.finalteam.toolsfinal.JsonValidator;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.alibaba.fastjson.JSON;
@@ -251,7 +250,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             return;
         }
 
-        if (StringUtils.isEmpty(result) || !new JsonValidator().validate(result)) {
+        if (StringUtils.isEmpty(result)) {
             callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_NULL, "result empty");
             return;
         }
@@ -267,6 +266,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 Logger.e(e);
             }
         } else {
+
             try {
                 Object obj = JSON.parseObject(result, callback.mType);
                 //Object obj = gson.fromJson(result, callback.mType);
