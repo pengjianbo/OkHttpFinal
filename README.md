@@ -23,9 +23,9 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.2.0'
+compile 'cn.finalteam:okhttpfinal:1.2.1'
 #带下载管理
-compile 'cn.finalteam:okhttpfinal-dm:1.2.0'
+compile 'cn.finalteam:okhttpfinal-dm:1.2.1'
 ```
 
 如果编译的时候出现 ![](images/error_build.png)这样的错误,请在你项目的build.gralde中加上以下语句
