@@ -43,6 +43,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //    compile project(':okhttpfinal')
+    compile 'cn.finalteam:okhttpfinal:1.2.2'
     compile project(':okhttpfinal-dm')
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.jakewharton:butterknife:7.0.1'

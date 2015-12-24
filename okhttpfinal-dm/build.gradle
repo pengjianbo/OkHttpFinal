@@ -37,6 +37,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'cn.finalteam:sqlitefinal:1.0.3'
+    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
     compile project(':okhttpfinal')
 }
 
