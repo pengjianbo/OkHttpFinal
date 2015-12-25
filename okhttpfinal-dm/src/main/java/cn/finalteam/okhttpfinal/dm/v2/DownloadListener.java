@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2015 彭建波(pengjianbo@finalteam.cn), Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.finalteam.okhttpfinal.dm.v2;
 
 import cn.aigestudio.downloader.interfaces.IDListener;
@@ -9,46 +25,6 @@ import java.io.File;
  * Date:15/12/23 下午11:16
  */
 public class DownloadListener {
-
-    private IDListener listener;
-
-    public DownloadListener() {
-        listener = new IDListener() {
-            @Override
-            public void onPrepare() {
-                DownloadListener.this.onPrepare();
-            }
-
-            @Override
-            public void onStart(String fileName, String realUrl, int fileLength) {
-                DownloadListener.this.onStart(fileName, realUrl, fileLength);
-            }
-
-            @Override
-            public void onProgress(int progress) {
-                DownloadListener.this.onProgress(progress);
-            }
-
-            @Override
-            public void onStop(int progress) {
-                DownloadListener.this.onStop(progress);
-            }
-
-            @Override
-            public void onFinish(File file) {
-                DownloadListener.this.onFinish(file);
-            }
-
-            @Override
-            public void onError(int status, String error) {
-                DownloadListener.this.onError(status, error);
-            }
-        };
-    }
-
-    public IDListener getDlListener() {
-        return listener;
-    }
 
     public void onPrepare() {
 
