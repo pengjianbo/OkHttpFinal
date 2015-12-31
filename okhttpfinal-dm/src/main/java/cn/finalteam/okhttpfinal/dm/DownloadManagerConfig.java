@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.dm.v2;
+package cn.finalteam.okhttpfinal.dm;
 
 import android.content.Context;
 import cn.finalteam.toolsfinal.StorageUtils;
@@ -34,6 +34,7 @@ public class DownloadManagerConfig {
 
     private DownloadManagerConfig(Builder builder) {
         this.context = builder.context;
+        this.debug = builder.debug;
         if (StringUtils.isEmpty(builder.saveDir)) {
             this.saveDir = StorageUtils.getCacheDirectory(context).getAbsolutePath() + "/download/";
         } else {
@@ -43,7 +44,6 @@ public class DownloadManagerConfig {
     }
 
     public static class Builder{
-
         private Context context;
         private String saveDir;
         private boolean debug;
@@ -63,8 +63,9 @@ public class DownloadManagerConfig {
             return this;
         }
 
-        public void setMaxTask(int maxTask) {
+        public Builder setMaxTask(int maxTask) {
             this.maxTask = maxTask;
+            return this;
         }
     }
 

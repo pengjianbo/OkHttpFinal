@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.dm.v2;
+package cn.aigestudio.downloader.bizs;
 
-import cn.aigestudio.downloader.interfaces.IDListener;
-import java.util.concurrent.ConcurrentHashMap;
+import android.content.Context;
 
 /**
  * Desction:
  * Author:pengjianbo
- * Date:15/12/24 上午11:09
+ * Date:2015/12/31 0031 15:32
  */
-class ListenerManager {
-    private ConcurrentHashMap<String, BridgeListener> mListenerListMap;
-    protected ListenerManager() {
-        mListenerListMap = new ConcurrentHashMap<>();
+public class DBManager {
+
+    private DLDBManager mDLDBManager;
+
+    public DBManager(Context context) {
+        mDLDBManager = DLDBManager.getInstance(context);
     }
 
-    public BridgeListener getBridgeListener(String url) {
-        BridgeListener listener = mListenerListMap.get(url);
-        if ( listener == null ) {
-            listener = new BridgeListener();
-        }
-        mListenerListMap.put(url, listener);
-        return listener;
-    }
+
 }

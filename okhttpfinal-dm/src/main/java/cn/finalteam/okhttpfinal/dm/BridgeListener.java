@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.dm.v2;
+package cn.finalteam.okhttpfinal.dm;
 
 import cn.aigestudio.downloader.interfaces.IDListener;
 import java.io.File;
@@ -39,6 +39,16 @@ class BridgeListener implements IDListener{
         if ( listener != null && !mListenerList.contains(listener)) {
             mListenerList.add(listener);
         }
+    }
+
+    public void removeDownloadListener(DownloadListener listener) {
+        if ( listener != null && !mListenerList.contains(listener)) {
+            mListenerList.remove(listener);
+        }
+    }
+
+    public void removeAllDownloadListener() {
+        mListenerList.clear();
     }
 
     @Override

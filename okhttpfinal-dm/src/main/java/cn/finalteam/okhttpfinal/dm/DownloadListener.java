@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 pengjianbo(pengjianbosoft@gmail.com), Inc.
+ * Copyright (C) 2015 彭建波(pengjianbo@finalteam.cn), Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7,45 +7,46 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package cn.finalteam.okhttpfinal.dm;
 
+import java.io.File;
+
 /**
- * Desction:文件下载事件回调
+ * Desction:
  * Author:pengjianbo
- * Date:15/8/22 下午6:22
+ * Date:15/12/23 下午11:16
  */
 public class DownloadListener {
 
-    /**
-     * 下载进行时回调
-     * Callback when download in progress.
-     *
-     */
-    public void onProgress(DownloadInfo downloadInfo) {
+    public void onPrepare() {
 
     }
 
-    /**
-     * 下载完成时回调
-     * Callback when download finish.
-     *
-     */
-    public void onFinish(DownloadInfo downloadInfo) {
+    public void onStart(String fileName, String realUrl, int fileLength) {
 
     }
 
-    /**
-     * 下载出错时回调
-     * Callback when download error.
-     *
-     */
-    public void onError(DownloadInfo downloadInfo) {
+    public void onProgress(int progress) {
+
     }
+
+    public void onStop(int progress) {
+
+    }
+
+    public void onFinish(File file) {
+
+    }
+
+    public void onError(int status, String error) {
+
+    }
+
 }
