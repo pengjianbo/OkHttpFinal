@@ -16,15 +16,17 @@
 
 package cn.finalteam.okhttpfinal;
 
-import cn.finalteam.okhttpfinal.https.HttpsCerManager;
-import cn.finalteam.toolsfinal.StringUtils;
-import com.squareup.okhttp.OkHttpClient;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
+
+import cn.finalteam.okhttpfinal.https.HttpsCerManager;
+import cn.finalteam.toolsfinal.StringUtils;
+import okhttp3.OkHttpClient;
 import okio.Buffer;
 
 /**
@@ -55,11 +57,14 @@ public class OkHttpFinal {
     }
 
     public void init() {
-        this.mOkHttpClient = OkHttpFactory.getOkHttpClientFactory(mTimeout);
+        OkHttpClient.Builder builder = OkHttpFactory.getOkHttpClientFactory(mTimeout).newBuilder();
+
         if (mCertificateList != null && mCertificateList.size() > 0) {
             HttpsCerManager httpsCerManager = new HttpsCerManager(mOkHttpClient);
-            httpsCerManager.setCertificates(mCertificateList);
+            builder.sslSocketFactory(httpsCerManager.newSslSocketFactory(mCertificateList));
         }
+
+        this.mOkHttpClient = builder.build();
 
         HttpRequest.setDebug(mDebug);
         mOkHttpFinal = this;

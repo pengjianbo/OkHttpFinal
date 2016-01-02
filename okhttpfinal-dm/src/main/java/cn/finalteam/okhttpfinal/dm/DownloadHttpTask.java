@@ -24,9 +24,9 @@ import cn.finalteam.sqlitefinal.sqlite.WhereBuilder;
 import cn.finalteam.toolsfinal.FileUtils;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -147,41 +147,35 @@ public class DownloadHttpTask extends Thread {
             resultCode = RESULT_NET_ERROR;
         } else {
 
+            InputStream inputStream = response.body().byteStream();
             try {
-                InputStream inputStream = response.body().byteStream();
-                try {
-                    long totalLength = response.body().contentLength();
-                    if ( mDownloadInfo.getTotalLength() == 0l ) {
-                        mDownloadInfo.setTotalLength(totalLength);
-                    }
+                long totalLength = response.body().contentLength();
+                if ( mDownloadInfo.getTotalLength() == 0l ) {
+                    mDownloadInfo.setTotalLength(totalLength);
+                }
 
-                    //文件大小大于总文件大小
-                    if ( startPos > mDownloadInfo.getTotalLength() ) {
-                        FileUtils.deleteFile(mDownloadInfo.getTargetPath());
-                        mDownloadInfo.setProgress(0);
-                        mDownloadInfo.setDownloadLength(0);
-                        mDownloadInfo.setTotalLength(0);
-                        return resultCode;
-                    }
+                //文件大小大于总文件大小
+                if ( startPos > mDownloadInfo.getTotalLength() ) {
+                    FileUtils.deleteFile(mDownloadInfo.getTargetPath());
+                    mDownloadInfo.setProgress(0);
+                    mDownloadInfo.setDownloadLength(0);
+                    mDownloadInfo.setTotalLength(0);
+                    return resultCode;
+                }
 
-                    if ( startPos == mDownloadInfo.getTotalLength() && startPos > 0 ) {
-                        publishProgress(100);
-                        return resultCode;
-                    }
+                if ( startPos == mDownloadInfo.getTotalLength() && startPos > 0 ) {
+                    publishProgress(100);
+                    return resultCode;
+                }
 
-                    //读写文件流
-                    int bytesCopied = download(inputStream, mProgressReportingRandomAccessFile);
-                    if (((startPos + bytesCopied) != mDownloadInfo.getTotalLength()) || mInterrupt) {
-                        //下载失败
-                        resultCode = RESULT_OTHER_ERROR;
-                        return resultCode;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                //读写文件流
+                int bytesCopied = download(inputStream, mProgressReportingRandomAccessFile);
+                if (((startPos + bytesCopied) != mDownloadInfo.getTotalLength()) || mInterrupt) {
+                    //下载失败
                     resultCode = RESULT_OTHER_ERROR;
                     return resultCode;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 resultCode = RESULT_OTHER_ERROR;
                 return resultCode;

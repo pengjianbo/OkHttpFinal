@@ -18,6 +18,9 @@ package cn.finalteam.okhttpfinal;
 
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
+import okhttp3.Call;
+import okhttp3.Dispatcher;
+
 import java.io.File;
 
 /**
@@ -194,10 +197,16 @@ public class HttpRequest {
      */
     public static void cancel(String url) {
         if ( !StringUtils.isEmpty(url) ) {
-            try {
-                OkHttpFinal.getOkHttpFinal().getOkHttpClient().cancel(url);
-            } catch (Exception e){
-                Logger.e(e);
+            Dispatcher dispatcher = OkHttpFinal.getOkHttpFinal().getOkHttpClient().dispatcher();
+            for (Call call : dispatcher.queuedCalls()) {
+                if (call.request().url().toString().equals(url)) {
+                    call.cancel();
+                }
+            }
+            for (Call call : dispatcher.runningCalls()) {
+                if (call.request().url().toString().equals(url)) {
+                    call.cancel();
+                }
             }
         }
     }

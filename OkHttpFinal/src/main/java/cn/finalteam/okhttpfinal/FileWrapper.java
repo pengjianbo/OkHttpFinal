@@ -16,7 +16,7 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.squareup.okhttp.MediaType;
+import okhttp3.MediaType;
 import java.io.File;
 
 /**

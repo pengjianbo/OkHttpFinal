@@ -23,11 +23,11 @@ import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.SocketTimeoutException;
@@ -69,24 +69,25 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         HttpTaskHandler.getInstance().addTask(this.requestKey, this);
 
         okHttpFinal = OkHttpFinal.getOkHttpFinal();
-        okHttpClient = okHttpFinal.getOkHttpClient();
+        OkHttpClient.Builder okHttpClientBuilder = okHttpFinal.getOkHttpClient().newBuilder();
         HostnameVerifier hostnameVerifier = okHttpFinal.getHostnameVerifier();
         if (hostnameVerifier != null) {
-            okHttpClient.setHostnameVerifier(hostnameVerifier);
+            okHttpClientBuilder.hostnameVerifier(hostnameVerifier);
         }
 
         if ( timeout == -1 ) {
             long globalTimeout = okHttpFinal.getTimeout();
             //设置请求时间
-            okHttpClient.setConnectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setWriteTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setReadTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.connectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.writeTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.readTimeout(globalTimeout, TimeUnit.MILLISECONDS);
         } else {
             //设置请求时间
-            okHttpClient.setConnectTimeout(timeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setWriteTimeout(timeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setReadTimeout(timeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+            okHttpClientBuilder.readTimeout(timeout, TimeUnit.MILLISECONDS);
         }
+        this.okHttpClient = okHttpClientBuilder.build();
     }
 
     @Override

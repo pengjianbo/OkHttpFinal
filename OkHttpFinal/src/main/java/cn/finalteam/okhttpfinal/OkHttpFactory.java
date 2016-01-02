@@ -16,10 +16,14 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.squareup.okhttp.OkHttpClient;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 
 /**
  * Desction:生产http client
@@ -29,18 +33,38 @@ import java.util.concurrent.TimeUnit;
 public class OkHttpFactory {
 
     public static OkHttpClient getOkHttpClientFactory(long timeout) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //设置请求时间
-        client.setConnectTimeout(timeout, TimeUnit.MILLISECONDS);
-        client.setWriteTimeout(timeout, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
         //请求不重复
-        client.setRetryOnConnectionFailure(false);
+        builder.retryOnConnectionFailure(false);
         //请求支持重定向
-        client.setFollowRedirects(true);
+        builder.followRedirects(true);
         //启用cookie
-        client.setCookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER));
+        builder.cookieJar(new SimpleCookieJar());
 
-        return client;
+        return builder.build();
+    }
+
+    private static class SimpleCookieJar implements CookieJar {
+        private final List<Cookie> cookies = new ArrayList<>();
+
+        @Override
+        public synchronized void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+            this.cookies.addAll(cookies);
+        }
+
+        @Override
+        public synchronized List<Cookie> loadForRequest(HttpUrl url) {
+            List<Cookie> result = new ArrayList<>();
+            for (Cookie cookie : cookies) {
+                if (cookie.matches(url)) {
+                    result.add(cookie);
+                }
+            }
+            return result;
+        }
     }
 }

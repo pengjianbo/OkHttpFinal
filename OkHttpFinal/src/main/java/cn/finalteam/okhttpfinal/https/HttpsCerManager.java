@@ -16,7 +16,7 @@
 
 package cn.finalteam.okhttpfinal.https;
 
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -32,6 +32,7 @@ import java.util.List;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -49,12 +50,12 @@ public class HttpsCerManager {
         this.okHttpClient = okHttpClient;
     }
 
-    public void setCertificates(List<InputStream> certificates) {
-        setCertificates(certificates.toArray(new InputStream[]{}), null, null);
+    public SSLSocketFactory newSslSocketFactory(List<InputStream> certificates) {
+        return newSslSocketFactory(certificates.toArray(new InputStream[]{}), null, null);
     }
 
-    public void setCertificates(InputStream... certificates) {
-        setCertificates(certificates, null, null);
+    public SSLSocketFactory newSslSocketFactory(InputStream... certificates) {
+        return newSslSocketFactory(certificates, null, null);
     }
 
     private TrustManager[] prepareTrustManager(InputStream... certificates) {
@@ -121,20 +122,20 @@ public class HttpsCerManager {
         return null;
     }
 
-    private void setCertificates(InputStream[] certificates, InputStream bksFile, String password) {
+    private SSLSocketFactory newSslSocketFactory(InputStream[] certificates, InputStream bksFile, String password) {
         try {
             TrustManager[] trustManagers = prepareTrustManager(certificates);
             KeyManager[] keyManagers = prepareKeyManager(bksFile, password);
             SSLContext sslContext = SSLContext.getInstance("TLS");
 
-            sslContext.init(keyManagers, new TrustManager[] { new OkHttpTrustManager(chooseTrustManager(trustManagers)) }, new SecureRandom());
-            okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+            sslContext.init(keyManagers, new TrustManager[]{new OkHttpTrustManager(chooseTrustManager(trustManagers))}, new SecureRandom());
+            return sslContext.getSocketFactory();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new AssertionError();
         } catch (KeyManagementException e) {
-            e.printStackTrace();
+            throw new AssertionError();
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            throw new AssertionError();
         }
     }
 
