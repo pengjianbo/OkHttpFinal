@@ -40,7 +40,7 @@ public class GameListAdapter extends CommonBaseAdapter<GameListAdapter.GameListH
     public void onBindViewHolder(final GameListHolder holder, int position) {
         final GameInfo gameInfo = mList.get(position);
         holder.mTvGameName.setText(gameInfo.getGameName());
-        if ( DownloadManager.getInstance(mContext).hasTask(gameInfo.getUrl()) ) {
+        if ( DownloadManager.getInstance().hasTask(gameInfo.getUrl()) ) {
             holder.mBtnDownload.setEnabled(false);
             holder.mBtnDownload.setText("已在队列");
         }
@@ -56,8 +56,8 @@ public class GameListAdapter extends CommonBaseAdapter<GameListAdapter.GameListH
             @Override
             public void onClick(View v) {
                 String url = gameInfo.getUrl();
-                if (!DownloadManager.getInstance(mContext).hasTask(url)) {
-                    DownloadManager.getInstance(mContext).addTask(url, null);
+                if (!DownloadManager.getInstance().hasTask(url)) {
+                    DownloadManager.getInstance().startTask(url, null);
 
                     holder.mBtnDownload.setEnabled(false);
                     holder.mBtnDownload.setText("已在队列");

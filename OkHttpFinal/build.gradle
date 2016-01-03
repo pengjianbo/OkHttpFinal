@@ -23,8 +23,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 1
-        versionName project_version
+        versionCode VERSION_CODE.toInteger()
+        versionName VERSION_NAME
     }
     buildTypes {
         release {
@@ -44,4 +44,4 @@ dependencies {
 
 }
 
-apply from: 'https://raw.githubusercontent.com/pengjianbo/ToolsFinal/master/bintray.gradle'
+apply from: '../gradle-mvn-push.gradle'

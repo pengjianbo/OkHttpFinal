@@ -14,39 +14,22 @@
  * limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.dm;
+package cn.aigestudio.downloader.bizs;
 
-import java.io.File;
+import android.content.Context;
 
 /**
  * Desction:
  * Author:pengjianbo
- * Date:15/12/23 下午11:16
+ * Date:2015/12/31 0031 15:32
  */
-public class DownloadListener {
+public class DBManager {
 
-    public void onPrepare() {
+    private DLDBManager mDLDBManager;
 
+    public DBManager(Context context) {
+        mDLDBManager = DLDBManager.getInstance(context);
     }
 
-    public void onStart(String fileName, String realUrl, int fileLength) {
-
-    }
-
-    public void onProgress(int progress) {
-
-    }
-
-    public void onStop(int progress) {
-
-    }
-
-    public void onFinish(File file) {
-
-    }
-
-    public void onError(int status, String error) {
-
-    }
 
 }
