@@ -16,9 +16,9 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
 import java.io.IOException;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okio.Buffer;
 import okio.BufferedSink;
 import okio.ForwardingSink;
@@ -30,7 +30,7 @@ import okio.Sink;
  * Author:pengjianbo
  * Date:15/12/10 下午5:31
  */
-public class ProgressRequestBody extends RequestBody{
+public class ProgressRequestBody extends RequestBody {
     //实际的待包装请求体
     private final RequestBody requestBody;
     //进度回调接口

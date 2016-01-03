@@ -16,7 +16,6 @@
 
 package cn.finalteam.okhttpfinal.https;
 
-import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -35,6 +34,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import okhttp3.OkHttpClient;
 
 /**
  * Desction:
@@ -43,10 +43,10 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpsCerManager {
 
-    private OkHttpClient okHttpClient;
+    private OkHttpClient.Builder okHttpBuilder;
 
-    public HttpsCerManager(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public HttpsCerManager(OkHttpClient.Builder builder) {
+        this.okHttpBuilder = builder;
     }
 
     public void setCertificates(List<InputStream> certificates) {
@@ -128,7 +128,7 @@ public class HttpsCerManager {
             SSLContext sslContext = SSLContext.getInstance("TLS");
 
             sslContext.init(keyManagers, new TrustManager[] { new OkHttpTrustManager(chooseTrustManager(trustManagers)) }, new SecureRandom());
-            okHttpClient.setSslSocketFactory(sslContext.getSocketFactory());
+            okHttpBuilder.sslSocketFactory(sslContext.getSocketFactory());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (KeyManagementException e) {

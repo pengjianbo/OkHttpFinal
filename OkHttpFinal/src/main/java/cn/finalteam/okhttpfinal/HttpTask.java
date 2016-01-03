@@ -23,16 +23,15 @@ import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeUnit;
-import javax.net.ssl.HostnameVerifier;
+import okhttp3.Call;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Desction:Http请求Task
@@ -70,23 +69,6 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
 
         okHttpFinal = OkHttpFinal.getOkHttpFinal();
         okHttpClient = okHttpFinal.getOkHttpClient();
-        HostnameVerifier hostnameVerifier = okHttpFinal.getHostnameVerifier();
-        if (hostnameVerifier != null) {
-            okHttpClient.setHostnameVerifier(hostnameVerifier);
-        }
-
-        if ( timeout == -1 ) {
-            long globalTimeout = okHttpFinal.getTimeout();
-            //设置请求时间
-            okHttpClient.setConnectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setWriteTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setReadTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-        } else {
-            //设置请求时间
-            okHttpClient.setConnectTimeout(timeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setWriteTimeout(timeout, TimeUnit.MILLISECONDS);
-            okHttpClient.setReadTimeout(timeout, TimeUnit.MILLISECONDS);
-        }
     }
 
     @Override
@@ -106,7 +88,6 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         Response response = null;
         ResponseData responseData = new ResponseData();
         try {
-            //OkHttpClient client = OkHttpFactory.getOkHttpClientFactory(timeout);
             String srcUrl = url;
             //构建请求Request实例
             Request.Builder builder = new Request.Builder();
@@ -150,8 +131,10 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             if (Constants.DEBUG) {
                 Logger.d("url=" + url + "?" + params.toString());
             }
+            Call call = okHttpClient.newCall(request);
+            OkHttpCallManager.getInstance().addCall(url, call);
             //执行请求
-            response = okHttpClient.newCall(request).execute();
+            response = call.execute();
         } catch (Exception e) {
             if (Constants.DEBUG) {
                 Logger.e("Exception=", e);
@@ -188,11 +171,19 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     protected void onPostExecute(ResponseData responseData) {
         super.onPostExecute(responseData);
 
+        OkHttpCallManager.getInstance().removeCall(url);
+
+        //判断请求是否在这个集合中
         if (!HttpTaskHandler.getInstance().contains(requestKey)) {
             return;
         }
 
-        //判断请求是否在这个集合中
+        if (callback != null) {
+            callback.onResponse(responseData.getResponse(), responseData.getHeaders());
+            callback.setResponseHeaders(responseData.getHeaders());
+        }
+
+
         if (!responseData.isResponseNull()) {//请求得到响应
             if (responseData.isSuccess()) {//成功的请求
                 String respBody = responseData.getResponse();

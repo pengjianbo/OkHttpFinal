@@ -20,13 +20,13 @@ import android.text.TextUtils;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.RequestBody;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * Desction:Http请求参数类
@@ -223,8 +223,8 @@ public class RequestParams {
             body = requestBody;
         } else if (fileParams.size() > 0) {
             boolean hasData = false;
-            MultipartBuilder builder = new MultipartBuilder();
-            builder.type(MultipartBuilder.FORM);
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            builder.setType(MultipartBody.FORM);
             for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
                 builder.addFormDataPart(entry.getKey(), entry.getValue());
                 hasData = true;
@@ -241,7 +241,7 @@ public class RequestParams {
                 body = builder.build();
             }
         } else {
-            FormEncodingBuilder builder = new FormEncodingBuilder();
+            FormBody.Builder builder = new FormBody.Builder();
             boolean hasData = false;
             for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
                 builder.add(entry.getKey(), entry.getValue());

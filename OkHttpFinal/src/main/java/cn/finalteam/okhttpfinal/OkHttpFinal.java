@@ -18,13 +18,14 @@ package cn.finalteam.okhttpfinal;
 
 import cn.finalteam.okhttpfinal.https.HttpsCerManager;
 import cn.finalteam.toolsfinal.StringUtils;
-import com.squareup.okhttp.OkHttpClient;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
+import okhttp3.OkHttpClient;
 import okio.Buffer;
 
 /**
@@ -54,12 +55,36 @@ public class OkHttpFinal {
         this.mDebug = builder.mDebug;
     }
 
-    public void init() {
-        this.mOkHttpClient = OkHttpFactory.getOkHttpClientFactory(mTimeout);
+    public void init(int timeout) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(mTimeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(mTimeout, TimeUnit.MILLISECONDS)
+                .readTimeout(mTimeout, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(false)
+                .followRedirects(true);
+        if ( getHostnameVerifier() != null ) {
+            builder.hostnameVerifier(mHostnameVerifier);
+        }
+
         if (mCertificateList != null && mCertificateList.size() > 0) {
-            HttpsCerManager httpsCerManager = new HttpsCerManager(mOkHttpClient);
+            HttpsCerManager httpsCerManager = new HttpsCerManager(builder);
             httpsCerManager.setCertificates(mCertificateList);
         }
+
+        if ( timeout == -1 ) {
+            long globalTimeout = mTimeout;
+            //设置请求时间
+            builder.connectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            builder.writeTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+            builder.readTimeout(globalTimeout, TimeUnit.MILLISECONDS);
+        } else {
+            //设置请求时间
+            builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+            builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+            builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        }
+
+        this.mOkHttpClient = builder.build();
 
         HttpRequest.setDebug(mDebug);
         mOkHttpFinal = this;
@@ -179,7 +204,7 @@ public class OkHttpFinal {
 
     public static OkHttpFinal getDefaultOkHttpFinal() {
         OkHttpFinal okHttpFinal = new Builder().setTimeout(Constants.REQ_TIMEOUT).build();
-        okHttpFinal.init();
+        okHttpFinal.init(Constants.REQ_TIMEOUT);
         return okHttpFinal;
     }
 

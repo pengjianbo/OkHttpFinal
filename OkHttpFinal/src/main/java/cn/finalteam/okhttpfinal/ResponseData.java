@@ -16,7 +16,7 @@
 
 package cn.finalteam.okhttpfinal;
 
-import com.squareup.okhttp.Headers;
+import okhttp3.Headers;
 
 /**
  * Desction:Http响应内容

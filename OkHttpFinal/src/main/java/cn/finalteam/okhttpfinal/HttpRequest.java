@@ -19,6 +19,7 @@ package cn.finalteam.okhttpfinal;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
 import java.io.File;
+import okhttp3.Call;
 
 /**
  * Desction:http请求类
@@ -194,11 +195,12 @@ public class HttpRequest {
      */
     public static void cancel(String url) {
         if ( !StringUtils.isEmpty(url) ) {
-            try {
-                OkHttpFinal.getOkHttpFinal().getOkHttpClient().cancel(url);
-            } catch (Exception e){
-                Logger.e(e);
+            Call call = OkHttpCallManager.getInstance().getCall(url);
+            if ( call != null ) {
+                call.cancel();
             }
+
+            OkHttpCallManager.getInstance().removeCall(url);
         }
     }
 
