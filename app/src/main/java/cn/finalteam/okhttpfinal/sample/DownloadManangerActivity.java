@@ -1,16 +1,5 @@
 package cn.finalteam.okhttpfinal.sample;
 
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import cn.finalteam.okhttpfinal.sample.adapter.DownloadManagerListAdapter;
-import java.util.List;
-import us.feras.mdv.MarkdownView;
-
 /**
  * Desction:
  * Author:pengjianbo

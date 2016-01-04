@@ -43,6 +43,6 @@ public class IApplication extends Application {
                 //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
 
         .build();
-        okHttpFinal.init();
+        okHttpFinal.init(Constants.REQ_TIMEOUT);
     }
 }

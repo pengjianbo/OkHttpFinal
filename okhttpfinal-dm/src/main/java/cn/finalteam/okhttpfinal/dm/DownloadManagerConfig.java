@@ -16,7 +16,7 @@
 
 package cn.finalteam.okhttpfinal.dm;
 
-import android.content.Context;
+import android.app.Application;
 import cn.finalteam.toolsfinal.StorageUtils;
 import cn.finalteam.toolsfinal.StringUtils;
 
@@ -27,16 +27,16 @@ import cn.finalteam.toolsfinal.StringUtils;
  */
 public class DownloadManagerConfig {
 
-    private Context context;
+    private Application application;
     private String saveDir;
     private boolean debug;
     private int maxTask;
 
     private DownloadManagerConfig(Builder builder) {
-        this.context = builder.context;
+        this.application = builder.application;
         this.debug = builder.debug;
         if (StringUtils.isEmpty(builder.saveDir)) {
-            this.saveDir = StorageUtils.getCacheDirectory(context).getAbsolutePath() + "/download/";
+            this.saveDir = StorageUtils.getCacheDirectory(application).getAbsolutePath() + "/download/";
         } else {
             this.saveDir = builder.saveDir;
         }
@@ -44,13 +44,13 @@ public class DownloadManagerConfig {
     }
 
     public static class Builder{
-        private Context context;
+        private Application application;
         private String saveDir;
         private boolean debug;
         private int maxTask = 3;
 
-        public Builder(Context context) {
-            this.context = context;
+        public Builder(Application application) {
+            this.application = application;
         }
 
         public Builder setSaveDir(String saveDir) {
@@ -69,8 +69,8 @@ public class DownloadManagerConfig {
         }
     }
 
-    public Context getContext() {
-        return context;
+    public Application getApplication() {
+        return application;
     }
 
     public String getSaveDir() {

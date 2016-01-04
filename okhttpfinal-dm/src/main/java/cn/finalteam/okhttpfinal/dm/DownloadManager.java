@@ -16,10 +16,11 @@
 
 package cn.finalteam.okhttpfinal.dm;
 
-import cn.aigestudio.downloader.bizs.DLInfo;
-import cn.aigestudio.downloader.bizs.DLManager;
 import cn.finalteam.toolsfinal.Logger;
 import cn.finalteam.toolsfinal.StringUtils;
+import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.util.FileDownloadLog;
+import java.io.File;
 
 /**
  * Desction:
@@ -28,16 +29,12 @@ import cn.finalteam.toolsfinal.StringUtils;
  */
 public class DownloadManager {
 
-    private DLManager mDLManager;
-    private String mSaveDir;
+    private static DownloadManager mDownloadManager;
     private ListenerManager mListenerManager;
 
-    private static DownloadManager mDownloadManager;
-
     private DownloadManager(DownloadManagerConfig config){
-        mDLManager = DLManager.getInstance(config.getContext());
-        mDLManager.setDebugEnable(config.isDebug());
-        mDLManager.setMaxTask(config.getMaxTask());
+        FileDownloader.init(config.getApplication());
+        FileDownloadLog.NEED_LOG = config.isDebug();
         mListenerManager = new ListenerManager();
     }
 
@@ -47,6 +44,27 @@ public class DownloadManager {
 
     public static void init(DownloadManagerConfig config) {
         mDownloadManager = new DownloadManager(config);
+    }
+
+    private boolean verfyUrl(String url) {
+        if ( StringUtils.isEmpty(url)) {
+            Logger.d("download url null");
+            return false;
+        }
+        return true;
+    }
+
+    public void addTask(String url, DownloadListener listener) {
+        if (verfyUrl(url)) {
+            BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
+            bridgeListener.addDownloadListener(listener);
+            File targetFile = new File("");
+            FileDownloader.getImpl().create(url)
+                    .setPath(targetFile.getAbsolutePath())
+                    .setListener(bridgeListener)
+                    .setAutoRetryTimes(3)
+                    .start();
+        }
     }
 
     /**
@@ -59,82 +77,5 @@ public class DownloadManager {
             BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
             bridgeListener.addDownloadListener(listener);
         }
-    }
-
-    public void removeTaskListener(String url, DownloadListener listener) {
-        if(verfyUrl(url)) {
-            mListenerManager.removeDownloadListener(url, listener);
-        }
-    }
-
-    public void removeTaskAllListener(String url) {
-        if(verfyUrl(url)) {
-            mListenerManager.removeAllDownloadListener(url);
-        }
-    }
-
-    /**
-     * 开始一个任务
-     * @param url
-     * @param listener
-     */
-    public void startTask(String url, DownloadListener listener) {
-        if(verfyUrl(url)) {
-            BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
-            bridgeListener.addDownloadListener(listener);
-            mDLManager.dlStart(url, mSaveDir, bridgeListener);//开始执行任务
-        }
-    }
-
-    /**
-     * 暂停任务
-     * @param url
-     */
-    public void stopTask(String url) {
-        if(verfyUrl(url)) {
-            mDLManager.dlStop(url);
-        }
-    }
-
-    /**
-     * 取消任务
-     * @param url
-     */
-    public void cancellTask(String url) {
-        if(verfyUrl(url)) {
-            mDLManager.dlCancel(url);
-        }
-    }
-
-    /**
-     * 判断任务是否存在
-     * @param url
-     * @return
-     */
-    public boolean hasTask(String url) {
-        DLInfo info = getTaskInfo(url);
-        if(info == null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * 任务信息
-     * @param url
-     * @return
-     */
-    public DLInfo getTaskInfo(String url) {
-        DLInfo dlInfo = mDLManager.getDLInfo(url);
-        return dlInfo;
-    }
-
-    private boolean verfyUrl(String url) {
-        if ( StringUtils.isEmpty(url)) {
-            Logger.d("download url null");
-            return false;
-        }
-        return true;
     }
 }

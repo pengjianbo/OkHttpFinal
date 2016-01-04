@@ -36,7 +36,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
     compile 'com.liulishuo.filedownloader:library:0.1.2'
     compile project(':okhttpfinal')
 }
