@@ -18,6 +18,11 @@ package cn.finalteam.okhttpfinal.sample;
 
 import android.app.Application;
 import cn.finalteam.okhttpfinal.OkHttpFinal;
+import cn.finalteam.okhttpfinal.dm.DownloadManager;
+import cn.finalteam.okhttpfinal.dm.DownloadManagerConfig;
+import cn.finalteam.toolsfinal.StorageUtils;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +43,18 @@ public class IApplication extends Application {
                 .setCommenParams(commonParamMap)
                 .setCommenHeader(commonHeaderMap)
                 .setTimeout(Constants.REQ_TIMEOUT)
-                .setDebug(true)
+                .setDebug(BuildConfig.DEBUG)
                 //.setCertificates(...)
                 //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
 
         .build();
         okHttpFinal.init(Constants.REQ_TIMEOUT);
+
+        DownloadManagerConfig dmConfig = new DownloadManagerConfig.Builder(this)
+                .setMaxTask(3)
+                .setDebug(BuildConfig.DEBUG)
+                .setSaveDir(new File(StorageUtils.getCacheDirectory(this), "download").getAbsolutePath())
+                .build();
+        DownloadManager.init(dmConfig);
     }
 }

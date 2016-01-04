@@ -13,7 +13,7 @@ public class DownloadListener {
 
     }
 
-    public void onProgress(BaseDownloadTask task, int preProgress) {
+    public void onProgress(BaseDownloadTask task, int progress) {
 
     }
 

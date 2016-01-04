@@ -16,11 +16,15 @@
 
 package cn.finalteam.okhttpfinal.dm;
 
+import cn.finalteam.toolsfinal.DateUtils;
+import cn.finalteam.toolsfinal.FileUtils;
 import cn.finalteam.toolsfinal.Logger;
+import cn.finalteam.toolsfinal.StorageUtils;
 import cn.finalteam.toolsfinal.StringUtils;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.util.FileDownloadLog;
 import java.io.File;
+import java.util.Date;
 
 /**
  * Desction:
@@ -31,11 +35,22 @@ public class DownloadManager {
 
     private static DownloadManager mDownloadManager;
     private ListenerManager mListenerManager;
+    private File mSaveDir;
 
     private DownloadManager(DownloadManagerConfig config){
         FileDownloader.init(config.getApplication());
         FileDownloadLog.NEED_LOG = config.isDebug();
         mListenerManager = new ListenerManager();
+
+        if ( StringUtils.isEmpty(config.getSaveDir()) ) {
+            mSaveDir = new File(StorageUtils.getCacheDirectory(config.getApplication()), "download");
+        } else {
+            mSaveDir = new File(config.getSaveDir());
+        }
+
+        if (!mSaveDir.exists()) {
+            mSaveDir.mkdirs();
+        }
     }
 
     public static DownloadManager getInstance() {
@@ -56,15 +71,37 @@ public class DownloadManager {
 
     public void addTask(String url, DownloadListener listener) {
         if (verfyUrl(url)) {
+            String filename = FileUtils.getUrlFileName(url);
+            if ( StringUtils.isEmpty(filename) ) {
+                filename = DateUtils.format(new Date(), "yyyyMMddHHmmss");
+            }
             BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
             bridgeListener.addDownloadListener(listener);
-            File targetFile = new File("");
+            File targetFile = new File(mSaveDir, filename);
             FileDownloader.getImpl().create(url)
                     .setPath(targetFile.getAbsolutePath())
                     .setListener(bridgeListener)
                     .setAutoRetryTimes(3)
                     .start();
         }
+    }
+
+    public void stopTask(String url) {
+        if (verfyUrl(url)) {
+            BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
+            FileDownloader.getImpl().pause(bridgeListener);
+        }
+    }
+
+    public void restarTask(String url) {
+        if (verfyUrl(url)) {
+            BridgeListener bridgeListener = mListenerManager.getBridgeListener(url);
+            FileDownloader.getImpl().start(bridgeListener, false);
+        }
+    }
+
+    public void stopAllTask() {
+        FileDownloader.getImpl().pauseAll();
     }
 
     /**

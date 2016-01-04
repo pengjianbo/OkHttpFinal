@@ -67,6 +67,10 @@ public class DownloadManagerConfig {
             this.maxTask = maxTask;
             return this;
         }
+
+        public DownloadManagerConfig build() {
+            return new DownloadManagerConfig(this);
+        }
     }
 
     public Application getApplication() {
