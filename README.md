@@ -23,7 +23,7 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:1.2.2'
+compile 'cn.finalteam:okhttpfinal:1.2.3'
 #带下载管理
 compile 'cn.finalteam:okhttpfinal-dm:1.2.2'
 ```
@@ -334,6 +334,10 @@ DownloadManager.getInstance(this).setGlobalDownloadListener(new DownloadListener
 ```
 
 #更新日志
+## V1.2.3
+* 更新OkHttp3
+* 添加获取header方法
+
 ## V1.2.2
 * 去掉json合法性验证
 

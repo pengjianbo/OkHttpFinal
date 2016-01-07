@@ -183,7 +183,6 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             callback.setResponseHeaders(responseData.getHeaders());
         }
 
-
         if (!responseData.isResponseNull()) {//请求得到响应
             if (responseData.isSuccess()) {//成功的请求
                 String respBody = responseData.getResponse();

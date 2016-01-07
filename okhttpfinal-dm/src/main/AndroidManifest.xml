@@ -17,4 +17,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.finalteam.okhttpfinal.dm">
 
+  <application>
+    <service
+        android:name="com.liulishuo.filedownloader.services.FileDownloadService"
+        android:process=":filedownloader"/>
+  </application>
+
 </manifest>

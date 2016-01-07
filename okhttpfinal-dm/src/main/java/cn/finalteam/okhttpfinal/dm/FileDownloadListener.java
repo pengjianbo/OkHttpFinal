@@ -7,7 +7,7 @@ import com.liulishuo.filedownloader.BaseDownloadTask;
  * Author:pengjianbo
  * Date:16/1/3 下午10:31
  */
-public class DownloadListener {
+public class FileDownloadListener {
 
     public void onStart(BaseDownloadTask task, int preProgress) {
 

@@ -40,9 +40,9 @@
 -dontwarn okio.**
 #--------------- END: okio ----------
 
-#--------------- BEGIN: DbHelper ----------
+#--------------- BEGIN: DBHelper ----------
 -keep class * extends java.lang.annotation.Annotation { *; }
-#--------------- END: DbHelper ----------
+#--------------- END: DBHelper ----------
 
 #--------------- BEGIN: 数据库模型 ----------
 -keep class cn.finalteam.okhttpfinal.* {*;}

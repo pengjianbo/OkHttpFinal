@@ -10,6 +10,7 @@ import butterknife.OnClick;
 import cn.finalteam.okhttpfinal.HttpRequest;
 import cn.finalteam.okhttpfinal.sample.adapter.GameListAdapter;
 import cn.finalteam.okhttpfinal.sample.model.GameInfo;
+
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -39,7 +40,6 @@ public class MainActivity extends BaseActivity {
         mGameList.add(new GameInfo("开心猜成语", "com.nerser.ccser", "http://apk.r1.market.hiapk.com/data/upload/apkres/2015/9_11/14/com.nerser.ccser_025042.apk", "http://img.r1.market.hiapk.com/data/upload/2015/09_11/14/72_72_20150911025051_7870.png"));
         mGameListAdapter = new GameListAdapter(this, mGameList);
         mLvGame.setAdapter(mGameListAdapter);
-
     }
 
     @OnClick(R.id.btn_api_bean)
