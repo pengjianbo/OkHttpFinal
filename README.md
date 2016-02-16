@@ -23,7 +23,7 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:2.0.0'
+compile 'cn.finalteam:okhttpfinal:2.0.1'
 ```
 
 ##eclipse使用

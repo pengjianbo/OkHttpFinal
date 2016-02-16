@@ -189,7 +189,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 if (Constants.DEBUG) {
                     ILogger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody));
                 }
-                parseResponseBody(respBody, callback);
+                parseResponseBody(responseData, callback);
             } else {//请求失败
                 int code = responseData.getCode();
                 String msg = responseData.getMessage();
@@ -231,14 +231,16 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     /**
      * 解析响应数据
      *
-     * @param result 请求的response 内容
+     * @param responseData 请求的response
      * @param callback 请求回调
      */
-    private void parseResponseBody(String result, BaseHttpRequestCallback callback) {
+    private void parseResponseBody(ResponseData responseData, BaseHttpRequestCallback callback) {
         //回调为空，不向下执行
         if (callback == null) {
             return;
         }
+
+        String result = responseData.getResponse();
 
         if (StringUtils.isEmpty(result)) {
             callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_NULL, "result empty");
@@ -246,7 +248,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         }
 
         if (callback.type == String.class) {
-            callback.onSuccess(headers, result);
+            callback.onSuccess(responseData.getHeaders(), result);
             callback.onSuccess(result);
             return;
         } else if ( callback.type == JSONObject.class) {
@@ -257,7 +259,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 ILogger.e(e);
             }
             if (jsonObject != null) {
-                callback.onSuccess(headers, jsonObject);
+                callback.onSuccess(responseData.getHeaders(), jsonObject);
                 callback.onSuccess(jsonObject);
                 return;
             }
@@ -270,7 +272,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             }
 
             if (jsonArray != null) {
-                callback.onSuccess(headers, jsonArray);
+                callback.onSuccess(responseData.getHeaders(), jsonArray);
                 callback.onSuccess(jsonArray);
                 return;
             }
@@ -282,7 +284,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 ILogger.e(e);
             }
             if (obj != null) {
-                callback.onSuccess(headers, obj);
+                callback.onSuccess(responseData.getHeaders(), obj);
                 callback.onSuccess(obj);
                 return;
             }

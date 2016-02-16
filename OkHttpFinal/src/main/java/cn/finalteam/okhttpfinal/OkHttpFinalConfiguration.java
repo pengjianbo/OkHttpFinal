@@ -67,6 +67,7 @@ public class OkHttpFinalConfiguration {
         this.followSslRedirects = builder.followSslRedirects;
         this.followRedirects = builder.followRedirects;
         this.retryOnConnectionFailure = builder.retryOnConnectionFailure;
+        this.proxy = builder.proxy;
     }
 
     public static class Builder {
