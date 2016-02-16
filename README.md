@@ -1,7 +1,7 @@
 ![](images/okhttpfinal.jpg)
 
 # OkHttpFinal简介
-一个对OkHttp封装的简单易用型HTTP请求和文件下载管理框架。更多详情文档请查看[WIKI](https://github.com/pengjianbo/OkHttpFinal/wiki)
+一个对OkHttp封装的简单易用型HTTP请求和文件下载管理框架。更多详情请查看[WIKI](https://github.com/pengjianbo/OkHttpFinal/wiki)
 
 * 简化[OkHttp](https://github.com/square/okhttp)使用
 * 支持GET,POST,PUT,DELETE,HEAD,PATCH谓词
@@ -119,7 +119,7 @@ HttpRequest.download(url, saveFile, new FileDownloadCallback() {
     }
 });
 ```
-**更多详情文档请查看[WIKI](https://github.com/pengjianbo/OkHttpFinal/wiki)**
+**更多功能请查看[WIKI](https://github.com/pengjianbo/OkHttpFinal/wiki)**
 
 # 代码混淆
 ```properties
