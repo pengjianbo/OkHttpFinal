@@ -17,14 +17,19 @@
 package cn.finalteam.okhttpfinal.sample;
 
 import android.app.Application;
-import cn.finalteam.okhttpfinal.OkHttpFinal;
-import cn.finalteam.okhttpfinal.dm.DownloadManager;
-import cn.finalteam.okhttpfinal.dm.DownloadManagerConfig;
-import cn.finalteam.toolsfinal.StorageUtils;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.finalteam.galleryfinal.CoreConfig;
+import cn.finalteam.galleryfinal.FunctionConfig;
+import cn.finalteam.galleryfinal.GalleryFinal;
+import cn.finalteam.galleryfinal.ImageLoader;
+import cn.finalteam.galleryfinal.ThemeConfig;
+import cn.finalteam.okhttpfinal.OkHttpFinal;
+import cn.finalteam.okhttpfinal.OkHttpFinalConfiguration;
+import cn.finalteam.okhttpfinal.Part;
+import okhttp3.Headers;
 
 /**
  * Desction:
@@ -36,25 +41,44 @@ public class IApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Map<String, String> commonParamMap = new HashMap<>();
-        Map<String, String> commonHeaderMap = new HashMap<>();
+        initOkHttpFinal();
 
-        OkHttpFinal okHttpFinal = new OkHttpFinal.Builder()
-                .setCommenParams(commonParamMap)
-                .setCommenHeader(commonHeaderMap)
+        initGalleryFinal();
+    }
+
+    private void initOkHttpFinal() {
+
+        List<Part> commomParams = new ArrayList<>();
+        Headers commonHeaders = new Headers.Builder().build();
+
+        OkHttpFinalConfiguration.Builder builder = new OkHttpFinalConfiguration.Builder()
+                .setCommenParams(commomParams)
+                .setCommenHeaders(commonHeaders)
                 .setTimeout(Constants.REQ_TIMEOUT)
-                .setDebug(BuildConfig.DEBUG)
-                //.setCertificates(...)
-                //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
+                        //.setCookieJar(CookieJar.NO_COOKIES)
+                        //.setCertificates(...)
+                        //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
+                .setDebug(true);
+        OkHttpFinal.getInstance().init(builder.build());
+    }
 
+
+    private void initGalleryFinal() {
+        //配置功能
+        FunctionConfig functionConfig = new FunctionConfig.Builder()
+                .setEnableCamera(true)
+                .setEnableEdit(true)
+                .setEnableCrop(true)
+                .setEnableRotate(true)
+                .setCropSquare(true)
+                .setEnablePreview(true)
         .build();
-        okHttpFinal.init(Constants.REQ_TIMEOUT);
 
-        DownloadManagerConfig dmConfig = new DownloadManagerConfig.Builder(this)
-                .setMaxTask(3)
-                .setDebug(BuildConfig.DEBUG)
-                .setSaveDir(new File(StorageUtils.getCacheDirectory(this), "download").getAbsolutePath())
+        //配置imageloader
+        ImageLoader imageloader = new UILImageLoader();
+        CoreConfig coreConfig = new CoreConfig.Builder(this, imageloader, ThemeConfig.CYAN)
+                .setFunctionConfig(functionConfig)
                 .build();
-        DownloadManager.init(dmConfig);
+        GalleryFinal.init(coreConfig);
     }
 }

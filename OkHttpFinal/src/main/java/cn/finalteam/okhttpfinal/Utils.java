@@ -16,8 +16,11 @@
 
 package cn.finalteam.okhttpfinal;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * Desction:
@@ -26,24 +29,30 @@ import java.util.Map;
  */
 class Utils {
 
-    public static String getFullUrl(String url, Map<String, String> paramsMap) {
+    public static String getFullUrl(String url, List<Part> params, boolean urlEncoder) {
         StringBuffer urlFull = new StringBuffer();
         urlFull.append(url);
-        if (urlFull.indexOf("?", 0) < 0 && paramsMap.size() > 0) {
+        if (urlFull.indexOf("?", 0) < 0 && params.size() > 0) {
             urlFull.append("?");
         }
-        Iterator<Map.Entry<String, String>> paramsIterator = paramsMap.entrySet().iterator();
-        while (paramsIterator.hasNext()) {
-            Map.Entry<String, String> entry = paramsIterator.next();
-            String key = entry.getKey();
-            String value = entry.getValue();
-
+        int flag = 0;
+        for (Part part:params){
+            String key = part.getKey();
+            String value = part.getValue();
+            if(urlEncoder){//只对key和value编码
+                try {
+                    key = URLEncoder.encode(key, "UTF-8");
+                    value = URLEncoder.encode(value, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
             urlFull.append(key).append("=").append(value);
-            if (paramsIterator.hasNext()) {
+            if (++flag != params.size()){
                 urlFull.append("&");
             }
         }
-        url = urlFull.toString();
-        return url;
+
+        return urlFull.toString();
     }
 }

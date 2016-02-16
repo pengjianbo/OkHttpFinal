@@ -27,6 +27,6 @@ public class JsonHttpRequestCallback extends BaseHttpRequestCallback<JSONObject>
 
     public JsonHttpRequestCallback() {
         super();
-        mType = JSONObject.class;
+        type = JSONObject.class;
     }
 }

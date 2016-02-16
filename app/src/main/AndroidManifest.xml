@@ -3,6 +3,7 @@
     package="cn.finalteam.okhttpfinal.sample" >
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -19,12 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewGameListActivity"/>
-        <activity android:name=".DownloadManangerActivity"/>
         <activity android:name=".UploadActivity" />
-        <activity android:name=".DownloadActivity"/>
         <activity android:name=".HttpRequestCallbackJsonActivity"/>
         <activity android:name=".HttpRequestCallbackStringActivity" />
         <activity android:name=".OtherFuncationActivity"/>
+        <activity android:name=".DownloadActivity"/>
 
     </application>
 

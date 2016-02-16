@@ -1,15 +1,15 @@
 ##配置OkHttpFinal
 <pre>
-Map<String, String> commonParamMap = new HashMap<>();
-Map<String, String> commonHeaderMap = new HashMap<>();
+List<Part> commomParams = new ArrayList<>();
+Headers commonHeaders = new Headers.Builder().build();
 
-OkHttpFinal okHttpFinal = new OkHttpFinal.Builder()
-	.setCommenParams(commonParamMap)
-	.setCommenHeader(commonHeaderMap)
-	.setTimeout(Constants.REQ_TIMEOUT)
-	.setDebug(true)
-	//.setCertificates(...)
-	//.setHostnameVerifier(new SkirtHttpsHostnameVerifier()
-	.build();
-okHttpFinal.init();
+OkHttpFinalConfiguration.Builder builder = new OkHttpFinalConfiguration.Builder()
+		.setCommenParams(commomParams)
+		.setCommenHeaders(commonHeaders)
+		.setTimeout(Constants.REQ_TIMEOUT)
+				//.setCookieJar(CookieJar.NO_COOKIES)
+				//.setCertificates(...)
+				//.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
+		.setDebug(true);
+OkHttpFinal.getInstance().init(builder.build());
 </pre>

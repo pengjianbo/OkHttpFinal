@@ -1,1 +1,1 @@
-include ':app', ':okhttpfinal', ':okhttpfinal-dm'
+include ':app', ':okhttpfinal'

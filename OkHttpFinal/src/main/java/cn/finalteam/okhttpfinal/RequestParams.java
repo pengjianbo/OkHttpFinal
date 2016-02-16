@@ -17,13 +17,16 @@
 package cn.finalteam.okhttpfinal;
 
 import android.text.TextUtils;
-import cn.finalteam.toolsfinal.Logger;
-import cn.finalteam.toolsfinal.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
+
 import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -35,15 +38,15 @@ import okhttp3.RequestBody;
  */
 public class RequestParams {
 
-    protected ConcurrentHashMap<String, String> headerMap;
-
-    protected ConcurrentHashMap<String, String> urlParams;
-    protected ConcurrentHashMap<String, FileWrapper> fileParams;
+    protected final Headers.Builder headers = new Headers.Builder();
+    private final List<Part> params = new ArrayList<>();
+    private final List<Part> files = new ArrayList<>();
 
     protected HttpCycleContext httpCycleContext;
     private String httpTaskKey;
-    private JSONObject jsonBody;
     private RequestBody requestBody;
+    private boolean applicationJson;
+    private boolean urlEncoder;//是否进行URL编码
 
     public RequestParams() {
         this(null);
@@ -55,23 +58,21 @@ public class RequestParams {
     }
 
     private void init() {
-        headerMap = new ConcurrentHashMap<>();
-        urlParams = new ConcurrentHashMap<>();
-        fileParams = new ConcurrentHashMap<>();
+        headers.add("charset", "UTF-8");
 
-        headerMap.put("charset", "UTF-8");
-
-
-        //添加公共参数
-        Map<String, String> commonParams = OkHttpFinal.getOkHttpFinal().getCommonParams();
-        if ( commonParams != null && commonParams.size() > 0 ) {
-            urlParams.putAll(commonParams);
+        List<Part> commonParams = OkHttpFinal.getInstance().getCommonParams();
+        if (commonParams != null && commonParams.size() > 0){
+            params.addAll(commonParams);
         }
 
         //添加公共header
-        Map<String, String> commonHeader = OkHttpFinal.getOkHttpFinal().getCommonHeaderMap();
-        if ( commonHeader != null && commonHeader.size() > 0 ) {
-            headerMap.putAll(commonHeader);
+        Headers commonHeaders = OkHttpFinal.getInstance().getCommonHeaders();
+        if ( commonHeaders != null && commonHeaders.size() > 0 ) {
+            for (int i = 0; i < commonHeaders.size(); i++) {
+                String key = commonHeaders.name(i);
+                String value = commonHeaders.value(i);
+                headers.add(key, value);
+            }
         }
 
         if ( httpCycleContext != null ) {
@@ -83,61 +84,67 @@ public class RequestParams {
         return this.httpTaskKey;
     }
 
+    //==================================params====================================
+
     /**
      * @param key
      * @param value
      */
-    public void put(String key, String value) {
+    public void addFormDataPart(String key, String value) {
         if ( value == null ) {
             value = "";
         }
 
-        if (!StringUtils.isEmpty(key)) {
-            urlParams.put(key, value);
+        Part part = new Part(key, value);
+        if (!StringUtils.isEmpty(key) && !params.contains(part)) {
+            params.add(part);
         }
     }
 
-    public void put(String key, int value) {
-        put(key, String.valueOf(value));
+    public void addFormDataPart(String key, int value) {
+        addFormDataPart(key, String.valueOf(value));
     }
 
-    public void put(String key, float value) {
-        put(key, String.valueOf(value));
+    public void addFormDataPart(String key, float value) {
+        addFormDataPart(key, String.valueOf(value));
     }
 
-    public void put(String key, double value) {
-        put(key, String.valueOf(value));
+    public void addFormDataPart(String key, double value) {
+        addFormDataPart(key, String.valueOf(value));
     }
 
-    public void put(String key, boolean value) {
-        put(key, String.valueOf(value));
+    public void addFormDataPart(String key, boolean value) {
+        addFormDataPart(key, String.valueOf(value));
     }
 
     /**
      * @param key
      * @param file
      */
-    public void put(String key, File file) {
+    public void addFormDataPart(String key, File file) {
         if (file == null || !file.exists() || file.length() == 0) {
             return;
         }
 
         boolean isPng = file.getName().lastIndexOf("png") > 0 || file.getName().lastIndexOf("PNG") > 0;
         if (isPng) {
-            put(key, file, "image/png; charset=UTF-8");
+            addFormDataPart(key, file, "image/png; charset=UTF-8");
+            return;
         }
 
-        boolean isJpg = file.getName().lastIndexOf("jpg") > 0 || file.getName().lastIndexOf("JPG") > 0;
+        boolean isJpg = file.getName().lastIndexOf("jpg") > 0 || file.getName().lastIndexOf("JPG") > 0
+                ||file.getName().lastIndexOf("jpeg") > 0 || file.getName().lastIndexOf("JPEG") > 0;
         if (isJpg) {
-            put(key, file, "image/jpeg; charset=UTF-8");
+            addFormDataPart(key, file, "image/jpeg; charset=UTF-8");
+            return;
         }
 
         if (!isPng && !isJpg) {
-            put(key, new FileWrapper(file, null));
+            addFormDataPart(key, new FileWrapper(file, null));
         }
     }
 
-    public void put(String key, File file, String contentType) {
+    public void addFormDataPart(String key, File file, String contentType) {
         if (file == null || !file.exists() || file.length() == 0) {
             return;
         }
@@ -146,95 +153,138 @@ public class RequestParams {
         try {
             mediaType = MediaType.parse(contentType);
         } catch (Exception e){
-            Logger.e(e);
+            ILogger.e(e);
         }
 
-        put(key, new FileWrapper(file, mediaType));
+        addFormDataPart(key, new FileWrapper(file, mediaType));
     }
 
-    public void put(String key, File file, MediaType mediaType) {
+    public void addFormDataPart(String key, File file, MediaType mediaType) {
         if (file == null || !file.exists() || file.length() == 0) {
             return;
         }
 
-        put(key, new FileWrapper(file, mediaType));
+        addFormDataPart(key, new FileWrapper(file, mediaType));
     }
 
-    public void put(String key, FileWrapper fileWrapper) {
+    public void addFormDataPart(String key, List<File> files, MediaType mediaType) {
+        for (File file:files){
+            if (file == null || !file.exists() || file.length() == 0) {
+                continue;
+            }
+            addFormDataPart(key, new FileWrapper(file, mediaType));
+        }
+    }
+
+    public void addFormDataPart(String key, FileWrapper fileWrapper) {
         if (!StringUtils.isEmpty(key) && fileWrapper != null) {
-            fileParams.put(key, fileWrapper);
+            File file = fileWrapper.getFile();
+            if (file == null || !file.exists() || file.length() == 0) {
+                return;
+            }
+            files.add(new Part(key, fileWrapper));
         }
     }
 
-    public void putAll(Map<String, String> params) {
-        if ( params != null && params.size() > 0 ) {
-            urlParams.putAll(params);
+    public void addFormDataPart(String key, List<FileWrapper> fileWrappers) {
+        for (FileWrapper fileWrapper:fileWrappers){
+            addFormDataPart(key, fileWrapper);
         }
     }
 
-    public void putHeader(String key, String value) {
+    public void addFormDataParts(List<Part> params) {
+        this.params.addAll(params);
+    }
+
+    //==================================header====================================
+    public void addHeader(String line) {
+        headers.add(line);
+    }
+
+    public void addHeader(String key, String value) {
         if ( value == null ) {
             value = "";
         }
 
         if (!TextUtils.isEmpty(key)) {
-            headerMap.put(key, value);
+            headers.add(key, value);
         }
     }
 
-    public void putHeader(String key, int value) {
-        putHeader(key, String.valueOf(value));
+    public void addHeader(String key, int value) {
+        addHeader(key, String.valueOf(value));
     }
 
-    public void putHeader(String key, float value) {
-        putHeader(key, String.valueOf(value));
+    public void addHeader(String key, float value) {
+        addHeader(key, String.valueOf(value));
     }
 
-    public void putHeader(String key, double value) {
-        putHeader(key, String.valueOf(value));
+    public void addHeader(String key, double value) {
+        addHeader(key, String.valueOf(value));
     }
 
-    public void putHeader(String key, boolean value) {
-        putHeader(key, String.valueOf(value));
+    public void addHeader(String key, boolean value) {
+        addHeader(key, String.valueOf(value));
     }
 
-    public void clearMap() {
-        urlParams.clear();
-        fileParams.clear();
+    /**
+     * URL编码，只对GET,DELETE,HEAD有效
+     */
+    public void urlEncoder() {
+        urlEncoder = true;
     }
 
-    public void setJSONObject(JSONObject jsonBody) {
-        this.jsonBody = jsonBody;
+    public boolean isUrlEncoder() {
+        return urlEncoder;
+    }
+
+    public void clear() {
+        params.clear();
+        files.clear();
+    }
+
+    /**
+     * 设置application/json方式传递数据
+     */
+    public void applicationJson(){
+        applicationJson = true;
     }
 
     public void setCustomRequestBody(RequestBody requestBody) {
         this.requestBody = requestBody;
     }
 
-    public Map<String, String> getUrlParams() {
-        return urlParams;
+    public List<Part> getUrlParams() {
+        return params;
     }
 
     protected RequestBody getRequestBody() {
         RequestBody body = null;
-        if (jsonBody != null) {
-            body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonBody.toJSONString());
+        if (applicationJson) {
+            JSONObject jsonObject = new JSONObject();
+            for (Part part:params) {
+                jsonObject.put(part.getKey(), part.getValue());
+            }
+            body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toJSONString());
         } else if (requestBody != null) {
             body = requestBody;
-        } else if (fileParams.size() > 0) {
+        } else if (files.size() > 0) {
             boolean hasData = false;
             MultipartBody.Builder builder = new MultipartBody.Builder();
             builder.setType(MultipartBody.FORM);
-            for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
-                builder.addFormDataPart(entry.getKey(), entry.getValue());
+            for (Part part:params){
+                String key = part.getKey();
+                String value = part.getValue();
+                builder.addFormDataPart(key, value);
                 hasData = true;
             }
 
-            for (ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
-                FileWrapper file = entry.getValue();
+            for (Part part:files){
+                String key = part.getKey();
+                FileWrapper file = part.getFileWrapper();
                 if (file != null) {
                     hasData = true;
-                    builder.addFormDataPart(entry.getKey(), file.getFileName(), RequestBody.create(file.getMediaType(), file.getFile()));
+                    builder.addFormDataPart(key, file.getFileName(), RequestBody.create(file.getMediaType(), file.getFile()));
                 }
             }
             if (hasData) {
@@ -243,8 +293,10 @@ public class RequestParams {
         } else {
             FormBody.Builder builder = new FormBody.Builder();
             boolean hasData = false;
-            for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
-                builder.add(entry.getKey(), entry.getValue());
+            for (Part part:params){
+                String key = part.getKey();
+                String value = part.getValue();
+                builder.add(key, value);
                 hasData = true;
             }
             if (hasData) {
@@ -258,20 +310,23 @@ public class RequestParams {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
+        for (Part part:params){
+            String key = part.getKey();
+            String value = part.getValue();
             if (result.length() > 0)
                 result.append("&");
 
-            result.append(entry.getKey());
+            result.append(key);
             result.append("=");
-            result.append(entry.getValue());
+            result.append(value);
         }
 
-        for (ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
+        for (Part part:files){
+            String key = part.getKey();
             if (result.length() > 0)
                 result.append("&");
 
-            result.append(entry.getKey());
+            result.append(key);
             result.append("=");
             result.append("FILE");
         }

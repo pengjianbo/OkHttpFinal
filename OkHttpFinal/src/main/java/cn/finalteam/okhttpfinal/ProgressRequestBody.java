@@ -38,7 +38,7 @@ public class ProgressRequestBody extends RequestBody {
     //包装完成的BufferedSink
     private BufferedSink bufferedSink;
     //开始下载时间，用户计算加载速度
-    private long mPreviousTime;
+    private long previousTime;
 
     /**
      * 构造函数，赋值
@@ -93,7 +93,7 @@ public class ProgressRequestBody extends RequestBody {
      * @return Sink
      */
     private Sink sink(Sink sink) {
-        mPreviousTime = System.currentTimeMillis();
+        previousTime = System.currentTimeMillis();
         return new ForwardingSink(sink) {
             //当前写入字节数
             long bytesWritten = 0L;
@@ -113,7 +113,7 @@ public class ProgressRequestBody extends RequestBody {
                 //回调
                 if (progressListener!=null) {
                     //计算下载速度
-                    long totalTime = (System.currentTimeMillis() - mPreviousTime)/1000;
+                    long totalTime = (System.currentTimeMillis() - previousTime)/1000;
                     if ( totalTime == 0 ) {
                         totalTime += 1;
                     }

@@ -48,8 +48,8 @@ public class HttpRequestCallbackStringActivity extends BaseActivity {
         setTitle("接口String回调");
 
         RequestParams params = new RequestParams(this);
-        params.put("page", 1);
-        params.put("limit", 12);
+        params.addFormDataPart("page", 1);
+        params.addFormDataPart("limit", 12);
         HttpRequest.post(Api.NEW_GAME, params, new StringHttpRequestCallback() {
             @Override
             protected void onSuccess(String s) {

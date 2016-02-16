@@ -18,14 +18,17 @@ package cn.finalteam.okhttpfinal;
 
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import cn.finalteam.toolsfinal.JsonFormatUtils;
-import cn.finalteam.toolsfinal.Logger;
-import cn.finalteam.toolsfinal.StringUtils;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.SocketTimeoutException;
+
+import cn.finalteam.toolsfinal.JsonFormatUtils;
+import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -49,9 +52,8 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
     private String requestKey;
     private Method method;
     private OkHttpClient okHttpClient;
-    private OkHttpFinal okHttpFinal;
 
-    public HttpTask(Method method, String url, RequestParams params, BaseHttpRequestCallback callback, long timeout) {
+    public HttpTask(Method method, String url, RequestParams params, BaseHttpRequestCallback callback) {
         this.method = method;
         this.url = url;
         this.params = params;
@@ -67,15 +69,14 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         //将请求的URL及参数组合成一个唯一请求
         HttpTaskHandler.getInstance().addTask(this.requestKey, this);
 
-        okHttpFinal = OkHttpFinal.getOkHttpFinal();
-        okHttpClient = okHttpFinal.getOkHttpClient();
+        okHttpClient = OkHttpFinal.getInstance().getOkHttpClient();
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (params.headerMap != null) {
-            headers = Headers.of(params.headerMap);
+        if (params.headers != null) {
+            headers = params.headers.build();
         }
 
         if (callback != null) {
@@ -94,15 +95,15 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
 
             switch (method) {
                 case GET:
-                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
                     builder.get();
                     break;
                 case DELETE:
-                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
                     builder.delete();
                     break;
                 case HEAD:
-                    url = Utils.getFullUrl(url, params.getUrlParams());
+                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
                     builder.head();
                     break;
                 case POST:
@@ -117,7 +118,6 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                         builder.put(new ProgressRequestBody(bodyPut, callback));
                     }
                     break;
-
                 case PATCH:
                     RequestBody bodyPatch = params.getRequestBody();
                     if (bodyPatch != null) {
@@ -129,7 +129,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             builder.url(url).tag(srcUrl).headers(headers);
             Request request = builder.build();
             if (Constants.DEBUG) {
-                Logger.d("url=" + url + "?" + params.toString());
+                ILogger.d("url=" + srcUrl + "?" + params.toString());
             }
             Call call = okHttpClient.newCall(request);
             OkHttpCallManager.getInstance().addCall(url, call);
@@ -137,7 +137,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             response = call.execute();
         } catch (Exception e) {
             if (Constants.DEBUG) {
-                Logger.e("Exception=", e);
+                ILogger.e("Exception=%s", e);
             }
             if (e instanceof SocketTimeoutException) {
                 responseData.setTimeout(true);
@@ -187,14 +187,14 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             if (responseData.isSuccess()) {//成功的请求
                 String respBody = responseData.getResponse();
                 if (Constants.DEBUG) {
-                    Logger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody));
+                    ILogger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody));
                 }
                 parseResponseBody(respBody, callback);
             } else {//请求失败
                 int code = responseData.getCode();
                 String msg = responseData.getMessage();
                 if (Constants.DEBUG) {
-                    Logger.d("url=" + url + "\n response failure code=" + code + " msg=" + msg);
+                    ILogger.d("url=" + url + "\n response failure code=" + code + " msg=" + msg);
                 }
                 if (code == 504) {
                     if (callback != null) {
@@ -215,7 +215,7 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 }
             } else {
                 if (Constants.DEBUG) {
-                    Logger.d("url=" + url + "\n response empty");
+                    ILogger.d("url=" + url + "\n response empty");
                 }
                 if (callback != null) {
                     callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_UNKNOWN, "http exception");
@@ -245,27 +245,46 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
             return;
         }
 
-        if (callback.mType == String.class) {
+        if (callback.type == String.class) {
+            callback.onSuccess(headers, result);
             callback.onSuccess(result);
             return;
-        } else if ( callback.mType == JSONObject.class) {
+        } else if ( callback.type == JSONObject.class) {
+            JSONObject jsonObject = null;
             try {
-                callback.onSuccess(JSON.parseObject(result));
-                return;
+                jsonObject = JSON.parseObject(result);
             } catch (Exception e) {
-                Logger.e(e);
+                ILogger.e(e);
+            }
+            if (jsonObject != null) {
+                callback.onSuccess(headers, jsonObject);
+                callback.onSuccess(jsonObject);
+                return;
+            }
+        } else if (callback.type == JSONArray.class) {
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = JSON.parseArray(result);
+            } catch (Exception e) {
+                ILogger.e(e);
+            }
+
+            if (jsonArray != null) {
+                callback.onSuccess(headers, jsonArray);
+                callback.onSuccess(jsonArray);
+                return;
             }
         } else {
-
+            Object obj = null;
             try {
-                Object obj = JSON.parseObject(result, callback.mType);
-                //Object obj = gson.fromJson(result, callback.mType);
-                if (obj != null) {
-                    callback.onSuccess(obj);
-                    return;
-                }
+                obj = JSON.parseObject(result, callback.type);
             } catch (Exception e) {
-                Logger.e(e);
+                ILogger.e(e);
+            }
+            if (obj != null) {
+                callback.onSuccess(headers, obj);
+                callback.onSuccess(obj);
+                return;
             }
         }
         //接口请求失败

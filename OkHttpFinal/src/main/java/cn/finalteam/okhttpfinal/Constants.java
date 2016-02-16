@@ -22,7 +22,7 @@ package cn.finalteam.okhttpfinal;
  * Date:15/9/21 上午9:54
  */
 class Constants {
-    protected static boolean DEBUG = BuildConfig.DEBUG;
+    static boolean DEBUG = false;
     //Http请求超时时间
     public static final int REQ_TIMEOUT = 30000;
 }

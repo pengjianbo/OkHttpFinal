@@ -16,9 +16,9 @@
 
 package cn.finalteam.okhttpfinal;
 
-import cn.finalteam.toolsfinal.Logger;
-import cn.finalteam.toolsfinal.StringUtils;
 import java.io.File;
+
+import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.Call;
 
 /**
@@ -27,11 +27,6 @@ import okhttp3.Call;
  * Date:15/9/22 下午10:17
  */
 public class HttpRequest {
-
-    public static void setDebug(boolean debug) {
-        Constants.DEBUG = debug;
-        Logger.init("OkHttpFinal", debug);
-    }
 
     public static void get(String url) {
         get(url, null, null);
@@ -46,17 +41,13 @@ public class HttpRequest {
     }
 
     /**
-     * Get请求 使用全局timeout
+     * Get请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        get(url, params, callback, -1);
-    }
-
-    public static void get(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.GET, url, params, callback, timeOut);
+        executeRequest(Method.GET, url, params, callback);
     }
 
     public static void post(String url) {
@@ -72,17 +63,13 @@ public class HttpRequest {
     }
 
     /**
-     * Post请求 使用全局timeout
+     * Post请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        post(url, params, callback, -1);
-    }
-
-    public static void post(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.POST, url, params, callback, timeOut);
+        executeRequest(Method.POST, url, params, callback);
     }
 
     public static void put(String url) {
@@ -98,17 +85,13 @@ public class HttpRequest {
     }
 
     /**
-     * put请求 使用全局timeout
+     * put请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void put(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        put(url, params, callback, -1);
-    }
-
-    public static void put(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.PUT, url, params, callback, timeOut);
+        executeRequest(Method.PUT, url, params, callback);
     }
 
     public static void delete(String url) {
@@ -124,17 +107,13 @@ public class HttpRequest {
     }
 
     /**
-     * delete请求 使用全局timeout
+     * delete请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void delete(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        delete(url, params, callback, -1);
-    }
-
-    public static void delete(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.DELETE, url, params, callback, timeOut);
+        executeRequest(Method.DELETE, url, params, callback);
     }
 
     public static void head(String url) {
@@ -150,17 +129,13 @@ public class HttpRequest {
     }
 
     /**
-     * head请求 使用全局timeout
+     * head请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void head(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        head(url, params, callback, -1);
-    }
-
-    public static void head(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.HEAD, url, params, callback, timeOut);
+        executeRequest(Method.HEAD, url, params, callback);
     }
 
     public static void patch(String url) {
@@ -176,17 +151,13 @@ public class HttpRequest {
     }
 
     /**
-     * patch请求 使用全局timeout
+     * patch请求 
      * @param url
      * @param params
      * @param callback
      */
     public static void patch(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        patch(url, params, callback, -1);
-    }
-
-    public static void patch(String url, RequestParams params, BaseHttpRequestCallback callback, int timeOut) {
-        executeRequest(Method.PATCH, url, params, callback, timeOut);
+        executeRequest(Method.PATCH, url, params, callback);
     }
 
     /**
@@ -204,6 +175,10 @@ public class HttpRequest {
         }
     }
 
+    public static void download(String url, File target) {
+        download(url, target, null);
+    }
+
     /**
      * 下载文件
      * @param url
@@ -217,9 +192,9 @@ public class HttpRequest {
         }
     }
 
-    private static void executeRequest(Method method, String url, RequestParams params, BaseHttpRequestCallback callback, int timeout) {
+    private static void executeRequest(Method method, String url, RequestParams params, BaseHttpRequestCallback callback) {
         if (!StringUtils.isEmpty(url)) {
-            HttpTask task = new HttpTask(method, url, params, callback, timeout);
+            HttpTask task = new HttpTask(method, url, params, callback);
             task.execute();
         }
     }

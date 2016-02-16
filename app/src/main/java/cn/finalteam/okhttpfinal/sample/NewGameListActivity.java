@@ -77,9 +77,9 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
 
     private void requestData(final int page) {
         RequestParams params = new RequestParams(this);
-        params.put("page", page);
-        params.put("limit", 12);
-        HttpRequest.post(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
+        params.addFormDataPart("page", page);
+        params.addFormDataPart("limit", 12);
+        HttpRequest.get(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
 
             @Override
             public void onLogicSuccess(NewGameResponse newGameResponse) {

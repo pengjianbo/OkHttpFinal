@@ -14,35 +14,39 @@
  * limitations under the License.
  */
 
-package cn.finalteam.okhttpfinal.dm.db;
-
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+package cn.finalteam.okhttpfinal.sample.http.model;
 
 /**
  * Desction:
  * Author:pengjianbo
- * Date:2016/1/4 0004 12:53
+ * Date:2016/1/20 0020 9:34
  */
-public class DBHelper extends SQLiteOpenHelper {
+public class TestModel {
+    private int id;
+    private String name;
+    private String image;
 
-    private static final String DB_NAME = "download.db";
-    private static final int DB_VERSION = 1;
-
-    public DBHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+    public int getId() {
+        return id;
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
+    public void setId(int id) {
+        this.id = id;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
-

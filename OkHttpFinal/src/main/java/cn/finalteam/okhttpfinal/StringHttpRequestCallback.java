@@ -25,9 +25,6 @@ public class StringHttpRequestCallback extends BaseHttpRequestCallback<String> {
 
     public StringHttpRequestCallback() {
         super();
-        mType = String.class;
+        type = String.class;
     }
-
-
-
 }

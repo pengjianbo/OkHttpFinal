@@ -16,17 +16,22 @@
 
 package cn.finalteam.okhttpfinal;
 
-import cn.finalteam.okhttpfinal.https.HttpsCerManager;
-import cn.finalteam.toolsfinal.StringUtils;
+import android.text.TextUtils;
+
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.HostnameVerifier;
+
+import cn.finalteam.okhttpfinal.https.HttpsCerManager;
+import cn.finalteam.toolsfinal.StringUtils;
+import okhttp3.CertificatePinner;
+import okhttp3.CookieJar;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
-import okio.Buffer;
+import okhttp3.internal.framed.Header;
 
 /**
  * Desction:
@@ -35,200 +40,119 @@ import okio.Buffer;
  */
 public class OkHttpFinal {
 
-    private OkHttpClient mOkHttpClient;
+    private OkHttpClient okHttpClient;
 
-    private Map<String, String> mCommonParamsMap;
-    private Map<String, String> mCommonHeaderMap;
-    private List<InputStream> mCertificateList;
-    private HostnameVerifier mHostnameVerifier;
-    private long mTimeout;
-    private boolean mDebug;
+    private static OkHttpFinal okHttpFinal;
+    private OkHttpFinalConfiguration configuration;
 
-    private static OkHttpFinal mOkHttpFinal;
-
-    private OkHttpFinal(Builder builder) {
-        this.mCommonParamsMap = builder.mCommonParamsMap;
-        this.mCommonHeaderMap = builder.mCommonHeaderMap;
-        this.mCertificateList = builder.mCertificateList;
-        this.mHostnameVerifier = builder.mHostnameVerifier;
-        this.mTimeout = builder.mTimeout;
-        this.mDebug = builder.mDebug;
+    private OkHttpFinal() {
     }
 
-    public void init(int timeout) {
+    public synchronized void init(OkHttpFinalConfiguration configuration) {
+        this.configuration = configuration;
+
+        long timeout = configuration.getTimeout();
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .connectTimeout(mTimeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(mTimeout, TimeUnit.MILLISECONDS)
-                .readTimeout(mTimeout, TimeUnit.MILLISECONDS)
+                .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                .readTimeout(timeout, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(false)
                 .followRedirects(true);
         if ( getHostnameVerifier() != null ) {
-            builder.hostnameVerifier(mHostnameVerifier);
+            builder.hostnameVerifier(configuration.getHostnameVerifier());
         }
 
-        if (mCertificateList != null && mCertificateList.size() > 0) {
+        List<InputStream> certificateList = configuration.getCertificateList();
+        if (certificateList != null && certificateList.size() > 0) {
             HttpsCerManager httpsCerManager = new HttpsCerManager(builder);
-            httpsCerManager.setCertificates(mCertificateList);
+            httpsCerManager.setCertificates(certificateList);
         }
 
-        if ( timeout == -1 ) {
-            long globalTimeout = mTimeout;
-            //设置请求时间
-            builder.connectTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            builder.writeTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-            builder.readTimeout(globalTimeout, TimeUnit.MILLISECONDS);
-        } else {
-            //设置请求时间
-            builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
-            builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
-            builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        CookieJar cookieJar = configuration.getCookieJar();
+        if (cookieJar != null) {
+            builder.cookieJar(cookieJar);
         }
 
-        this.mOkHttpClient = builder.build();
+        if(configuration.getCache() != null) {
+            builder.cache(configuration.getCache());
+        }
 
-        HttpRequest.setDebug(mDebug);
-        mOkHttpFinal = this;
+        if (configuration.getAuthenticator() != null){
+            builder.authenticator(configuration.getAuthenticator());
+        }
+        if (configuration.getCertificatePinner() != null) {
+            builder.certificatePinner(configuration.getCertificatePinner());
+        }
+        builder.followRedirects(configuration.isFollowRedirects());
+        builder.followSslRedirects(configuration.isFollowSslRedirects());
+        builder.retryOnConnectionFailure(configuration.isRetryOnConnectionFailure());
+
+        if(configuration.getProxy() != null){
+            builder.proxy(configuration.getProxy());
+        }
+        ILogger.DEBUG = configuration.isDebug();
+        Constants.DEBUG = configuration.isDebug();
+
+        okHttpClient = builder.build();
     }
 
-    public static class Builder {
-        private Map<String, String> mCommonParamsMap;
-        private Map<String, String> mCommonHeaderMap;
-        private List<InputStream> mCertificateList;
-        private HostnameVerifier mHostnameVerifier;
-        private long mTimeout;
-        private boolean mDebug;
-
-        public Builder() {
-            this.mCommonParamsMap = new HashMap<>();
-            this.mCommonHeaderMap = new HashMap<>();
-            this.mCertificateList = new ArrayList<>();
+    public static OkHttpFinal getInstance() {
+        if (okHttpFinal == null) {
+            okHttpFinal = new OkHttpFinal();
         }
-
-        /**
-         * 添加公共参数
-         * @param paramsMap
-         * @return
-         */
-        public Builder setCommenParams(Map<String, String> paramsMap){
-            for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-                if ( !StringUtils.isEmpty(entry.getKey()) ) {
-                    String value = "";
-                    if ( !StringUtils.isEmpty(entry.getValue()) ) {
-                        value = entry.getValue();
-                    }
-                    mCommonParamsMap.put(entry.getKey(), value);
-                }
-            }
-            return this;
-        }
-
-        /**
-         * 公共header
-         * @param headerMap
-         * @return
-         */
-        public Builder setCommenHeader(Map<String, String> headerMap) {
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                if ( !StringUtils.isEmpty(entry.getKey()) ) {
-                    String value = "";
-                    if ( !StringUtils.isEmpty(entry.getValue()) ) {
-                        value = entry.getValue();
-                    }
-                    mCommonHeaderMap.put(entry.getKey(), value);
-                }
-            }
-            return this;
-        }
-
-        /**
-         * 指定证书
-         * @param certificates
-         * @return
-         */
-        public Builder setCertificates(InputStream... certificates) {
-            for(InputStream inputStream:certificates) {
-                if ( inputStream != null ) {
-                    mCertificateList.add(inputStream);
-                }
-            }
-            return this;
-        }
-
-        public Builder setCertificates(String... certificates) {
-            for(String certificate:certificates) {
-                if (!StringUtils.isEmpty(certificate)) {
-                    mCertificateList.add(new Buffer()
-                            .writeUtf8(certificate)
-                            .inputStream());
-                }
-            }
-            return this;
-        }
-
-        public Builder setHostnameVerifier(HostnameVerifier hostnameVerifier) {
-            this.mHostnameVerifier = hostnameVerifier;
-            return this;
-        }
-
-        /**
-         * 设置调试开关
-         * @param debug
-         * @return
-         */
-        public Builder setDebug(boolean debug) {
-            this.mDebug = debug;
-            return this;
-        }
-
-        /**
-         * 设置timeout
-         * @param timeout
-         * @return
-         */
-        public Builder setTimeout(long timeout) {
-            this.mTimeout = timeout;
-            return this;
-        }
-
-        public OkHttpFinal build() {
-            return new OkHttpFinal(this);
-        }
-    }
-
-    public static OkHttpFinal getOkHttpFinal() {
-        if (mOkHttpFinal == null) {
-            return getDefaultOkHttpFinal();
-        }
-        return mOkHttpFinal;
-    }
-
-    public static OkHttpFinal getDefaultOkHttpFinal() {
-        OkHttpFinal okHttpFinal = new Builder().setTimeout(Constants.REQ_TIMEOUT).build();
-        okHttpFinal.init(Constants.REQ_TIMEOUT);
         return okHttpFinal;
     }
 
-    public OkHttpClient getOkHttpClient() {
-        return mOkHttpClient;
+    /**
+     * 修改公共请求参数信息
+     * @param key
+     * @param value
+     */
+    public void updateCommonParams(String key, String value) {
+        List<Part> commonParams = configuration.getCommonParams();
+        if (commonParams != null){
+            for (Part param:commonParams) {
+                if (param != null && TextUtils.equals(param.getKey(), key)){
+                    param.setValue(value);
+                    break;
+                }
+            }
+        }
     }
 
-    public Map<String, String> getCommonParams() {
-        return mCommonParamsMap;
+    /**
+     * 修改公共header信息
+     * @param key
+     * @param value
+     */
+    public void updateCommonHeader(String key, String value) {
+        Headers headers = configuration.getCommonHeaders();
+        if (headers != null) {
+            configuration.commonHeaders = headers.newBuilder().set(key, value).build();
+        }
+    }
+
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
+    }
+
+    public List<Part> getCommonParams() {
+        return configuration.getCommonParams();
     }
 
     public List<InputStream> getCertificateList() {
-        return mCertificateList;
+        return configuration.getCertificateList();
     }
 
     public HostnameVerifier getHostnameVerifier() {
-        return mHostnameVerifier;
+        return configuration.getHostnameVerifier();
     }
 
     public long getTimeout() {
-        return mTimeout;
+        return configuration.getTimeout();
     }
 
-    public Map<String, String> getCommonHeaderMap() {
-        return mCommonHeaderMap;
+    public Headers getCommonHeaders() {
+        return configuration.getCommonHeaders();
     }
 }

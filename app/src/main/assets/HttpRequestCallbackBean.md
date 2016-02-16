@@ -1,8 +1,8 @@
 ##实例代码
 <pre>
 RequestParams params = new RequestParams(this);
-params.put("page", page);
-params.put("limit", 12);
+params.addFormDataPart("page", page);
+params.addFormDataPart("limit", 12);
 HttpRequest.post(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
     @Override
     public void onLogicSuccess(NewGameResponse newGameResponse) {

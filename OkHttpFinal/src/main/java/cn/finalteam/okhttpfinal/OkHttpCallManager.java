@@ -11,29 +11,29 @@ import okhttp3.Call;
  */
 public class OkHttpCallManager {
 
-    private ConcurrentHashMap<String, Call> mCallMap;
-    private static OkHttpCallManager mManager;
+    private ConcurrentHashMap<String, Call> callMap;
+    private static OkHttpCallManager manager;
 
     private OkHttpCallManager() {
-        mCallMap = new ConcurrentHashMap<>();
+        callMap = new ConcurrentHashMap<>();
     }
 
     public static OkHttpCallManager getInstance() {
-        if (mManager == null) {
-            mManager = new OkHttpCallManager();
+        if (manager == null) {
+            manager = new OkHttpCallManager();
         }
-        return mManager;
+        return manager;
     }
 
     public void addCall(String url, Call call) {
         if (call != null && StringUtils.isEmpty(url)) {
-            mCallMap.put(url, call);
+            callMap.put(url, call);
         }
     }
 
     public Call getCall(String url) {
         if ( StringUtils.isEmpty(url) ) {
-            return mCallMap.get(url);
+            return callMap.get(url);
         }
 
         return null;
@@ -41,7 +41,7 @@ public class OkHttpCallManager {
 
     public void removeCall(String url) {
         if ( StringUtils.isEmpty(url) ) {
-            mCallMap.remove(url);
+            callMap.remove(url);
         }
     }
 

@@ -17,11 +17,13 @@
 package cn.finalteam.okhttpfinal;
 
 import android.os.AsyncTask;
-import cn.finalteam.toolsfinal.FileUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import cn.finalteam.toolsfinal.io.FileUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,21 +36,19 @@ import okhttp3.Response;
 public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
 
     private OkHttpClient okHttpClient;
-    private OkHttpFinal okHttpFinal;
     private FileDownloadCallback callback;
     private String url;
     private File target;
     //开始下载时间，用户计算加载速度
-    private long mPreviousTime;
+    private long previousTime;
 
     public FileDownloadTask(String url, File target, FileDownloadCallback callback) {
         this.url = url;
-        this.okHttpFinal = OkHttpFinal.getOkHttpFinal();
-        this.okHttpClient = okHttpFinal.getOkHttpClient();
+        this.okHttpClient = OkHttpFinal.getInstance().getOkHttpClient();
         this.callback = callback;
         this.target = target;
 
-        FileUtils.makeFolders(target);
+        FileUtils.mkdirs(target.getParentFile());
         if (target.exists()) {
             target.delete();
         }
@@ -57,7 +57,7 @@ public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mPreviousTime = System.currentTimeMillis();
+        previousTime = System.currentTimeMillis();
         if (callback != null) {
             callback.onStart();
         }
@@ -95,7 +95,7 @@ public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
 
             int progress = (int) (sum * 100.0f / total);
             //计算下载速度
-            long totalTime = (System.currentTimeMillis() - mPreviousTime)/1000;
+            long totalTime = (System.currentTimeMillis() - previousTime)/1000;
             if ( totalTime == 0 ) {
                 totalTime += 1;
             }
@@ -128,7 +128,7 @@ public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
             final long total = response.body().contentLength();
             long sum = 0;
 
-            FileUtils.makeFolders(target);
+            FileUtils.mkdirs(target.getParentFile());
 
             fos = new FileOutputStream(target);
             while ((len = is.read(buf)) != -1) {
