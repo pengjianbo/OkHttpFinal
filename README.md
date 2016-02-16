@@ -27,7 +27,7 @@ compile 'cn.finalteam:okhttpfinal:2.0.0'
 ```
 
 ##eclipse使用
-下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra) (如果你没使用下载管理SQLiteFinal.jar不需要添加)
+下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra)
 
 ## 2.0.0更新内容
 * 更新OkHttp3
