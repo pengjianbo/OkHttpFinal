@@ -29,16 +29,9 @@ compile 'cn.finalteam:okhttpfinal:2.0.1'
 ##eclipse使用
 下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra)
 
-## 2.0.0更新内容
-* 更新OkHttp3
-* 下载管理分离
-* 解决公共参数更新bug
-* 解决List<Bean>类型转换问题
-* 添加JsonArrayHttpRequestCallback回调类
-* 多文件上传
-* 添加URL编码
-* 请求参数支持添加文件集合
-* 整理代码/优化设计
+## 2.0.2更新内容
+* 添加拦截器
+* 解决onProgress回调方法在非Main线程执行问题
 
 ---
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)

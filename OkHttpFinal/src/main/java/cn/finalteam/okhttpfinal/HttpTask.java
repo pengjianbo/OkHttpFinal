@@ -188,13 +188,13 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
         OkHttpCallManager.getInstance().removeCall(url);
         //判断请求是否在这个集合中
         if (!HttpTaskHandler.getInstance().contains(requestKey)) {
+            HttpRequest.cancel(url);
             return;
         }
 
         if (callback != null) {
-            callback.headers = responseData.getHeaders();
-            callback.onResponse(responseData.getResponse(), responseData.getHeaders());
             callback.setResponseHeaders(responseData.getHeaders());
+            callback.onResponse(responseData.getResponse(), responseData.getHeaders());
         }
 
         if (!responseData.isResponseNull()) {//请求得到响应
