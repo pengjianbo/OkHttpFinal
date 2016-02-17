@@ -2,6 +2,7 @@
 # V2.0.2
 * 添加拦截器
 * 解决onProgress回调方法在非Main线程执行问题
+* 页面销毁自动cancel
 
 # V2.0.1
 * 解决获取响应header bug

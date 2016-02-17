@@ -23,7 +23,7 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:2.0.1'
+compile 'cn.finalteam:okhttpfinal:2.0.2'
 ```
 
 ##eclipse使用
@@ -32,6 +32,7 @@ compile 'cn.finalteam:okhttpfinal:2.0.1'
 ## 2.0.2更新内容
 * 添加拦截器
 * 解决onProgress回调方法在非Main线程执行问题
+* 页面销毁自动cancel
 
 ---
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)
