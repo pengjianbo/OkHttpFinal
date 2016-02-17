@@ -1,4 +1,12 @@
 # 更新日志
+# V2.0.2
+* 添加拦截器
+* 解决onProgress回调方法在非Main线程执行问题
+
+# V2.0.1
+* 解决获取响应header bug
+* 修改applicationJson方法
+
 ## V2.0.0
 * 更新OkHttp3
 * 下载管理分离

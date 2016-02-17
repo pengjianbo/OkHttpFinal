@@ -32,7 +32,7 @@ public class BaseHttpRequestCallback<T> {
     public static final int ERROR_RESPONSE_UNKNOWN = 1003;
     public static final int ERROR_RESPONSE_TIMEOUT = 1004;
     protected Type type;
-    private Headers headers;
+    protected Headers headers;
 
     public BaseHttpRequestCallback() {
         type = ClassTypeReflect.getModelClazz(getClass());
@@ -48,7 +48,6 @@ public class BaseHttpRequestCallback<T> {
     }
 
     protected void onSuccess(Headers headers, T t) {
-
     }
     protected void onSuccess(T t) {
 

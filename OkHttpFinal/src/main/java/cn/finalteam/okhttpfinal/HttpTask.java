@@ -41,7 +41,7 @@ import okhttp3.Response;
  * Author:pengjianbo
  * Date:15/7/3 上午11:14
  */
-public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
+public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
 
     public static final String DEFAULT_HTTP_TASK_KEY = "default_http_task_key";
 
@@ -109,23 +109,22 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
                 case POST:
                     RequestBody body = params.getRequestBody();
                     if (body != null) {
-                        builder.post(new ProgressRequestBody(body, callback));
+                        builder.post(new ProgressRequestBody(body, this));
                     }
                     break;
                 case PUT:
                     RequestBody bodyPut = params.getRequestBody();
                     if (bodyPut != null) {
-                        builder.put(new ProgressRequestBody(bodyPut, callback));
+                        builder.put(new ProgressRequestBody(bodyPut, this));
                     }
                     break;
                 case PATCH:
                     RequestBody bodyPatch = params.getRequestBody();
                     if (bodyPatch != null) {
-                        builder.put(new ProgressRequestBody(bodyPatch, callback));
+                        builder.put(new ProgressRequestBody(bodyPatch, this));
                     }
                     break;
             }
-
             builder.url(url).tag(srcUrl).headers(headers);
             Request request = builder.build();
             if (Constants.DEBUG) {
@@ -167,18 +166,33 @@ public class HttpTask extends AsyncTask<Void, Void, ResponseData> {
         return responseData;
     }
 
+    protected void updateProgress(int progress, long networkSpeed, int done) {
+        publishProgress((long)progress, networkSpeed, (long)done);
+    }
+
+    @Override
+    protected void onProgressUpdate(Long... values) {
+        super.onProgressUpdate(values);
+        if (callback != null) {
+            long progress = values[0];
+            long networkSpeed = values[1];
+            long done = values[2];
+            callback.onProgress((int)progress, networkSpeed, done == 1L);
+        }
+    }
+
     @Override
     protected void onPostExecute(ResponseData responseData) {
         super.onPostExecute(responseData);
 
         OkHttpCallManager.getInstance().removeCall(url);
-
         //判断请求是否在这个集合中
         if (!HttpTaskHandler.getInstance().contains(requestKey)) {
             return;
         }
 
         if (callback != null) {
+            callback.headers = responseData.getHeaders();
             callback.onResponse(responseData.getResponse(), responseData.getHeaders());
             callback.setResponseHeaders(responseData.getHeaders());
         }
