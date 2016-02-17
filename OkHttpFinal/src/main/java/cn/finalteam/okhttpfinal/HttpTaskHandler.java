@@ -57,11 +57,13 @@ public class HttpTaskHandler {
             List<HttpTask> tasks = httpTaskMap.get(key);
             if (tasks != null && tasks.size() > 0) {
                 for (HttpTask task : tasks) {
+                    HttpRequest.cancel(task.getUrl());
                     if (!task.isCancelled()) {
                         task.cancel(true);
                     }
                 }
             }
+
             //移除对应的Key
             httpTaskMap.remove(key);
         }

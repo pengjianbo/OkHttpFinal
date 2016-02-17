@@ -72,6 +72,10 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
         okHttpClient = OkHttpFinal.getInstance().getOkHttpClient();
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -188,7 +192,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
         OkHttpCallManager.getInstance().removeCall(url);
         //判断请求是否在这个集合中
         if (!HttpTaskHandler.getInstance().contains(requestKey)) {
-            HttpRequest.cancel(url);
+
             return;
         }
 
