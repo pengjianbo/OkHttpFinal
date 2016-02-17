@@ -47,6 +47,7 @@ public class RequestParams {
     private RequestBody requestBody;
     private boolean applicationJson;
     private boolean urlEncoder;//是否进行URL编码
+    private JSONObject jsonParams;
 
     public RequestParams() {
         this(null);
@@ -102,6 +103,10 @@ public class RequestParams {
     }
 
     public void addFormDataPart(String key, int value) {
+        addFormDataPart(key, String.valueOf(value));
+    }
+
+    public void addFormDataPart(String key, long value) {
         addFormDataPart(key, String.valueOf(value));
     }
 
@@ -215,6 +220,10 @@ public class RequestParams {
         addHeader(key, String.valueOf(value));
     }
 
+    public void addHeader(String key, long value) {
+        addHeader(key, String.valueOf(value));
+    }
+
     public void addHeader(String key, float value) {
         addHeader(key, String.valueOf(value));
     }
@@ -245,9 +254,11 @@ public class RequestParams {
 
     /**
      * 设置application/json方式传递数据
+     * @param jsonParams 请求的JSON实例
      */
-    public void applicationJson(){
+    public void applicationJson(JSONObject jsonParams){
         applicationJson = true;
+        this.jsonParams = jsonParams;
     }
 
     public void setCustomRequestBody(RequestBody requestBody) {
@@ -261,11 +272,17 @@ public class RequestParams {
     protected RequestBody getRequestBody() {
         RequestBody body = null;
         if (applicationJson) {
-            JSONObject jsonObject = new JSONObject();
-            for (Part part:params) {
-                jsonObject.put(part.getKey(), part.getValue());
+            String json;
+            if (jsonParams == null) {
+                JSONObject jsonObject = new JSONObject();
+                for (Part part : params) {
+                    jsonObject.put(part.getKey(), part.getValue());
+                }
+                json = jsonObject.toJSONString();
+            } else {
+                json = jsonParams.toJSONString();
             }
-            body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toJSONString());
+            body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         } else if (requestBody != null) {
             body = requestBody;
         } else if (files.size() > 0) {
