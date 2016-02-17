@@ -29,6 +29,7 @@ import okhttp3.Cache;
 import okhttp3.CertificatePinner;
 import okhttp3.CookieJar;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okio.Buffer;
 
 /**
@@ -52,6 +53,8 @@ public class OkHttpFinalConfiguration {
     private boolean followRedirects;
     private boolean retryOnConnectionFailure;
     private Proxy proxy;
+    private List<Interceptor> networkInterceptorList;
+    private List<Interceptor> interceptorList;
 
     private OkHttpFinalConfiguration(final Builder builder) {
         this.commonParams = builder.commonParams;
@@ -68,6 +71,8 @@ public class OkHttpFinalConfiguration {
         this.followRedirects = builder.followRedirects;
         this.retryOnConnectionFailure = builder.retryOnConnectionFailure;
         this.proxy = builder.proxy;
+        this.networkInterceptorList = builder.networkInterceptorList;
+        this.interceptorList = builder.interceptorList;
     }
 
     public static class Builder {
@@ -85,6 +90,8 @@ public class OkHttpFinalConfiguration {
         private boolean followRedirects;
         private boolean retryOnConnectionFailure;
         private Proxy proxy;
+        private List<Interceptor> networkInterceptorList;
+        private List<Interceptor> interceptorList;
 
         public Builder() {
             this.certificateList = new ArrayList<>();
@@ -218,6 +225,26 @@ public class OkHttpFinalConfiguration {
             return this;
         }
 
+        /**
+         * 设置网络拦截器
+         * @param interceptors
+         * @return
+         */
+        public Builder setNetworkInterceptors(List<Interceptor> interceptors) {
+            this.networkInterceptorList = interceptors;
+            return this;
+        }
+
+        /**
+         * 设置应用拦截器
+         * @param interceptors
+         * @return
+         */
+        public Builder setInterceptors(List<Interceptor> interceptors) {
+            this.interceptorList = interceptors;
+            return this;
+        }
+
         public OkHttpFinalConfiguration build() {
             return new OkHttpFinalConfiguration(this);
         }
@@ -277,5 +304,13 @@ public class OkHttpFinalConfiguration {
 
     public Proxy getProxy() {
         return proxy;
+    }
+
+    public List<Interceptor> getNetworkInterceptorList() {
+        return networkInterceptorList;
+    }
+
+    public List<Interceptor> getInterceptorList() {
+        return interceptorList;
     }
 }

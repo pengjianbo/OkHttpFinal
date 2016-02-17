@@ -86,6 +86,12 @@ public class OkHttpFinal {
         builder.followRedirects(configuration.isFollowRedirects());
         builder.followSslRedirects(configuration.isFollowSslRedirects());
         builder.retryOnConnectionFailure(configuration.isRetryOnConnectionFailure());
+        if (configuration.getNetworkInterceptorList() != null) {
+            builder.networkInterceptors().addAll(configuration.getNetworkInterceptorList());
+        }
+        if (configuration.getInterceptorList() != null) {
+            builder.interceptors().addAll(configuration.getInterceptorList());
+        }
 
         if(configuration.getProxy() != null){
             builder.proxy(configuration.getProxy());
