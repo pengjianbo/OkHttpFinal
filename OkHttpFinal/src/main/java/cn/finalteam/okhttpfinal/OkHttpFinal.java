@@ -20,18 +20,14 @@ import android.text.TextUtils;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 
 import cn.finalteam.okhttpfinal.https.HttpsCerManager;
-import cn.finalteam.toolsfinal.StringUtils;
-import okhttp3.CertificatePinner;
 import okhttp3.CookieJar;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
-import okhttp3.internal.framed.Header;
 
 /**
  * Desction:
@@ -55,10 +51,8 @@ public class OkHttpFinal {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(timeout, TimeUnit.MILLISECONDS)
                 .writeTimeout(timeout, TimeUnit.MILLISECONDS)
-                .readTimeout(timeout, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(false)
-                .followRedirects(true);
-        if ( getHostnameVerifier() != null ) {
+                .readTimeout(timeout, TimeUnit.MILLISECONDS);
+        if ( configuration.getHostnameVerifier() != null ) {
             builder.hostnameVerifier(configuration.getHostnameVerifier());
         }
 
