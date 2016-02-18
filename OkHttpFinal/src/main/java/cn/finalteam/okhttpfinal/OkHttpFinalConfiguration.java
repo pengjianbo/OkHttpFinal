@@ -16,6 +16,7 @@
 
 package cn.finalteam.okhttpfinal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import okhttp3.CertificatePinner;
 import okhttp3.CookieJar;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
+import okhttp3.Response;
 import okio.Buffer;
 
 /**
@@ -94,10 +96,11 @@ public class OkHttpFinalConfiguration {
         private List<Interceptor> interceptorList;
 
         public Builder() {
-            this.certificateList = new ArrayList<>();
+            certificateList = new ArrayList<>();
             followSslRedirects = true;
             followRedirects = true;
             retryOnConnectionFailure = true;
+            networkInterceptorList = new ArrayList<>();
         }
 
         /**
@@ -196,6 +199,53 @@ public class OkHttpFinalConfiguration {
         }
 
         /**
+         * 设置缓存-并且添加网络拦截器修改响应头(有无网络都先读缓存)
+         * 强制响应缓存者根据该值校验新鲜性.即与自身的Age值,与请求时间做比较.如果超出max-age值,则强制去服务器端验证.以确保返回一个新鲜的响应.
+         * @param cache
+         * @param cacheTime 缓存时间 单位秒
+         * @return
+         */
+        public Builder setCacheAge(Cache cache, final int cacheTime) {
+            setCache(cache, String.format("max-age=%d", cacheTime));
+
+            return this;
+        }
+
+        /**
+         * 设置缓存-并且添加网络拦截器修改响应头(有无网络都先读缓存)
+         * 允许缓存者发送一个过期不超过指定秒数的陈旧的缓存.
+         * @param cache
+         * @param cacheTime 缓存时间 单位秒
+         * @return
+         */
+        public Builder setCacheStale(Cache cache, final int cacheTime) {
+            setCache(cache, String.format("max-stale=%d", cacheTime));
+            return this;
+        }
+
+        /**
+         * 设置缓存-并且添加网络拦截器修改响应头(有无网络都先读缓存)
+         * @param cache
+         * @param cacheControlValue Cache-Control值
+         * @return
+         */
+        public Builder setCache(Cache cache, final String cacheControlValue) {
+            Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
+                    return originalResponse.newBuilder()
+                            .removeHeader("Pragma")
+                            .header("Cache-Control", cacheControlValue)
+                            .build();
+                }
+            };
+            networkInterceptorList.add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
+            this.cache = cache;
+            return this;
+        }
+
+        /**
          * 设置Authenticator
          * @param authenticator
          * @return
@@ -231,7 +281,9 @@ public class OkHttpFinalConfiguration {
          * @return
          */
         public Builder setNetworkInterceptors(List<Interceptor> interceptors) {
-            this.networkInterceptorList = interceptors;
+            if (interceptors != null) {
+                networkInterceptorList.addAll(interceptors);
+            }
             return this;
         }
 
