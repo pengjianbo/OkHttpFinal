@@ -265,6 +265,18 @@ public class RequestParams {
         this.requestBody = requestBody;
     }
 
+    public void setRequestBodyString(String string) {
+        setRequestBody(MediaType.parse("text/plain; charset=utf-8"), string);
+    }
+
+    public void setRequestBody(String mediaType, String string) {
+        setRequestBody(MediaType.parse(mediaType), string);
+    }
+
+    public void setRequestBody(MediaType mediaType, String string) {
+        setCustomRequestBody(RequestBody.create(mediaType, string));
+    }
+
     public List<Part> getUrlParams() {
         return params;
     }
