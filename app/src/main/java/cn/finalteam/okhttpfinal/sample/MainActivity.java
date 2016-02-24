@@ -21,6 +21,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initImageLoader(this);
+
     }
 
     @OnClick(R.id.btn_api_bean)

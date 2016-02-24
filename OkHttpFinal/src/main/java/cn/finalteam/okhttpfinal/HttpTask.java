@@ -99,15 +99,15 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
 
             switch (method) {
                 case GET:
-                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
+                    url = Utils.getFullUrl(url, params.getFormParams(), params.isUrlEncoder());
                     builder.get();
                     break;
                 case DELETE:
-                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
+                    url = Utils.getFullUrl(url, params.getFormParams(), params.isUrlEncoder());
                     builder.delete();
                     break;
                 case HEAD:
-                    url = Utils.getFullUrl(url, params.getUrlParams(), params.isUrlEncoder());
+                    url = Utils.getFullUrl(url, params.getFormParams(), params.isUrlEncoder());
                     builder.head();
                     break;
                 case POST:
@@ -299,7 +299,8 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             try {
                 obj = JSON.parseObject(result, callback.type);
             } catch (Exception e) {
-                ILogger.e(e);
+                e.printStackTrace();
+//                ILogger.e(e);
             }
             if (obj != null) {
                 callback.onSuccess(responseData.getHeaders(), obj);

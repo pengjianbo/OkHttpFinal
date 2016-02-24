@@ -277,7 +277,7 @@ public class RequestParams {
         setCustomRequestBody(RequestBody.create(mediaType, string));
     }
 
-    public List<Part> getUrlParams() {
+    public List<Part> getFormParams() {
         return params;
     }
 

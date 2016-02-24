@@ -109,14 +109,19 @@ public class OkHttpFinal {
      * @param value
      */
     public void updateCommonParams(String key, String value) {
+        boolean add = false;
         List<Part> commonParams = configuration.getCommonParams();
         if (commonParams != null){
             for (Part param:commonParams) {
                 if (param != null && TextUtils.equals(param.getKey(), key)){
                     param.setValue(value);
+                    add = true;
                     break;
                 }
             }
+        }
+        if (!add) {
+            commonParams.add(new Part(key, value));
         }
     }
 
@@ -127,9 +132,10 @@ public class OkHttpFinal {
      */
     public void updateCommonHeader(String key, String value) {
         Headers headers = configuration.getCommonHeaders();
-        if (headers != null) {
-            configuration.commonHeaders = headers.newBuilder().set(key, value).build();
+        if ( headers == null){
+            headers = new Headers.Builder().build();
         }
+        configuration.commonHeaders = headers.newBuilder().set(key, value).build();
     }
 
     public OkHttpClient getOkHttpClient() {
