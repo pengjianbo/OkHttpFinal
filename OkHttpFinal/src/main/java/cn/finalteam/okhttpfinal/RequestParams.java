@@ -172,6 +172,16 @@ public class RequestParams {
         addFormDataPart(key, new FileWrapper(file, mediaType));
     }
 
+
+    public void addFormDataPartFiles(String key, List<File> files) {
+        for (File file:files){
+            if (file == null || !file.exists() || file.length() == 0) {
+                continue;
+            }
+            addFormDataPart(key, file);
+        }
+    }
+
     public void addFormDataPart(String key, List<File> files, MediaType mediaType) {
         for (File file:files){
             if (file == null || !file.exists() || file.length() == 0) {
@@ -259,6 +269,10 @@ public class RequestParams {
     public void applicationJson(JSONObject jsonParams){
         applicationJson = true;
         this.jsonParams = jsonParams;
+    }
+
+    public void applicationJson() {
+        applicationJson = true;
     }
 
     public void setCustomRequestBody(RequestBody requestBody) {
@@ -358,6 +372,10 @@ public class RequestParams {
             result.append(key);
             result.append("=");
             result.append("FILE");
+        }
+
+        if(jsonParams != null) {
+            result.append(jsonParams.toJSONString());
         }
 
         return result.toString();
