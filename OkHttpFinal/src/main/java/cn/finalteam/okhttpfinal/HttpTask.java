@@ -132,7 +132,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             builder.url(url).tag(srcUrl).headers(headers);
             Request request = builder.build();
             if (Constants.DEBUG) {
-                ILogger.d("url=" + srcUrl + "?" + params.toString());
+                ILogger.d("url=" + srcUrl + "?" + params.toString() +"\n header=" + headers.toString());
             }
             Call call = okHttpClient.newCall(request);
             OkHttpCallManager.getInstance().addCall(url, call);
@@ -205,7 +205,12 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             if (responseData.isSuccess()) {//成功的请求
                 String respBody = responseData.getResponse();
                 if (Constants.DEBUG) {
-                    ILogger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody));
+                    Headers headers = responseData.getHeaders();
+                    String respHeader = "";
+                    if (headers != null) {
+                        respHeader = headers.toString();
+                    }
+                    ILogger.d("url=" + url + "\n result=" + JsonFormatUtils.formatJson(respBody) +"\n header=" + respHeader);
                 }
                 parseResponseBody(responseData, callback);
             } else {//请求失败
@@ -299,8 +304,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             try {
                 obj = JSON.parseObject(result, callback.type);
             } catch (Exception e) {
-                e.printStackTrace();
-//                ILogger.e(e);
+                ILogger.e(e);
             }
             if (obj != null) {
                 callback.onSuccess(responseData.getHeaders(), obj);
