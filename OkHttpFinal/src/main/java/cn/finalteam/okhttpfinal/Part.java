@@ -29,12 +29,12 @@ public final class Part {
     private FileWrapper fileWrapper;
 
     public Part(String key, String value) {
-        this.key = key;
-        this.value = value;
+        setKey(key);
+        setValue(value);
     }
 
     public Part(String key, FileWrapper fileWrapper) {
-        this.key = key;
+        setKey(key);
         this.fileWrapper = fileWrapper;
     }
 
@@ -51,11 +51,19 @@ public final class Part {
     }
 
     protected void setKey(String key) {
-        this.key = key;
+        if(key == null) {
+            this.key = "";
+        } else {
+            this.key = key;
+        }
     }
 
     protected void setValue(String value) {
-        this.value = value;
+        if(value == null) {
+            this.value = "";
+        } else {
+            this.value = value;
+        }
     }
 
     @Override

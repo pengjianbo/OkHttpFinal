@@ -140,7 +140,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             response = call.execute();
         } catch (Exception e) {
             if (Constants.DEBUG) {
-                ILogger.e("Exception=%s", e);
+                ILogger.e(e);
             }
             if (e instanceof SocketTimeoutException) {
                 responseData.setTimeout(true);

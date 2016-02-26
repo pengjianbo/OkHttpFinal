@@ -6,6 +6,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.finalteam.okhttpfinal.HttpRequest;
@@ -18,8 +22,6 @@ import cn.finalteam.okhttpfinal.sample.http.model.NewGameResponse;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayout;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayoutDirection;
 import cn.finalteam.toolsfinal.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
 import us.feras.mdv.MarkdownView;
 
 /**
@@ -79,7 +81,7 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
         RequestParams params = new RequestParams(this);
         params.addFormDataPart("page", page);
         params.addFormDataPart("limit", 12);
-        HttpRequest.get(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
+        HttpRequest.post(Api.NEW_GAME, params, new MyBaseHttpRequestCallback<NewGameResponse>() {
 
             @Override
             public void onLogicSuccess(NewGameResponse newGameResponse) {
