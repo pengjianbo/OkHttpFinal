@@ -19,6 +19,7 @@ package cn.finalteam.okhttpfinal;
 import java.lang.reflect.Type;
 
 import okhttp3.Headers;
+import okhttp3.Response;
 
 /**
  * Desction:请求回调类
@@ -39,6 +40,10 @@ public class BaseHttpRequestCallback<T> {
     }
 
     public void onStart() {
+    }
+
+    public void onResponse(Response httpResponse, String response, Headers headers) {
+
     }
 
     public void onResponse(String response, Headers headers) {

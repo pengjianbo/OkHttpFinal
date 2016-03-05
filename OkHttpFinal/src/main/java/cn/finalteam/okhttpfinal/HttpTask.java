@@ -138,6 +138,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
             OkHttpCallManager.getInstance().addCall(url, call);
             //执行请求
             response = call.execute();
+
         } catch (Exception e) {
             if (Constants.DEBUG) {
                 ILogger.e(e);
@@ -167,6 +168,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
         } else {
             responseData.setResponseNull(true);
         }
+        responseData.setHttpResponse(response);
         return responseData;
     }
 
@@ -198,6 +200,7 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
 
         if (callback != null) {
             callback.setResponseHeaders(responseData.getHeaders());
+            callback.onResponse(responseData.getHttpResponse(), responseData.getResponse(), responseData.getHeaders());
             callback.onResponse(responseData.getResponse(), responseData.getHeaders());
         }
 

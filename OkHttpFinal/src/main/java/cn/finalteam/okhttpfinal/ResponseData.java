@@ -17,6 +17,7 @@
 package cn.finalteam.okhttpfinal;
 
 import okhttp3.Headers;
+import okhttp3.Response;
 
 /**
  * Desction:Http响应内容
@@ -33,6 +34,7 @@ class ResponseData {
     private String response;//http响应结果
     private boolean success;//是否成功
     private Headers headers;//http headers
+    private Response httpResponse;
 
     public int getCode() {
         return code;
@@ -88,5 +90,13 @@ class ResponseData {
 
     public void setTimeout(boolean timeout) {
         this.timeout = timeout;
+    }
+
+    public Response getHttpResponse() {
+        return httpResponse;
+    }
+
+    public void setHttpResponse(Response httpResponse) {
+        this.httpResponse = httpResponse;
     }
 }
