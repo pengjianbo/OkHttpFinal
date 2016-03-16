@@ -79,6 +79,12 @@ public class OkHttpFinal {
         }
         builder.followRedirects(configuration.isFollowRedirects());
         builder.followSslRedirects(configuration.isFollowSslRedirects());
+        if(configuration.getSslSocketFactory() != null) {
+            builder.sslSocketFactory(configuration.getSslSocketFactory());
+        }
+        if(configuration.getDispatcher() != null) {
+            builder.dispatcher(configuration.getDispatcher());
+        }
         builder.retryOnConnectionFailure(configuration.isRetryOnConnectionFailure());
         if (configuration.getNetworkInterceptorList() != null) {
             builder.networkInterceptors().addAll(configuration.getNetworkInterceptorList());

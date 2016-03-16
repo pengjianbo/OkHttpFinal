@@ -23,12 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 
 import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.Authenticator;
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
 import okhttp3.CookieJar;
+import okhttp3.Dispatcher;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.Response;
@@ -57,6 +59,8 @@ public class OkHttpFinalConfiguration {
     private Proxy proxy;
     private List<Interceptor> networkInterceptorList;
     private List<Interceptor> interceptorList;
+    private SSLSocketFactory sslSocketFactory;
+    private Dispatcher dispatcher;
 
     private OkHttpFinalConfiguration(final Builder builder) {
         this.commonParams = builder.commonParams;
@@ -75,6 +79,8 @@ public class OkHttpFinalConfiguration {
         this.proxy = builder.proxy;
         this.networkInterceptorList = builder.networkInterceptorList;
         this.interceptorList = builder.interceptorList;
+        this.sslSocketFactory = builder.sslSocketFactory;
+        this.dispatcher = builder.dispatcher;
     }
 
     public static class Builder {
@@ -94,6 +100,8 @@ public class OkHttpFinalConfiguration {
         private Proxy proxy;
         private List<Interceptor> networkInterceptorList;
         private List<Interceptor> interceptorList;
+        private SSLSocketFactory sslSocketFactory;
+        private Dispatcher dispatcher;
 
         public Builder() {
             certificateList = new ArrayList<>();
@@ -297,6 +305,26 @@ public class OkHttpFinalConfiguration {
             return this;
         }
 
+        /**
+         * 设置SSLSocketFactory实例
+         * @param sslSocketFactory
+         * @return
+         */
+        public Builder setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
+            this.sslSocketFactory = sslSocketFactory;
+            return this;
+        }
+
+        /**
+         * 设置Dispatcher实例
+         * @param dispatcher
+         * @return
+         */
+        public Builder setDispatcher(Dispatcher dispatcher) {
+            this.dispatcher = dispatcher;
+            return this;
+        }
+
         public OkHttpFinalConfiguration build() {
             return new OkHttpFinalConfiguration(this);
         }
@@ -364,5 +392,13 @@ public class OkHttpFinalConfiguration {
 
     public List<Interceptor> getInterceptorList() {
         return interceptorList;
+    }
+
+    public SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory;
+    }
+
+    public Dispatcher getDispatcher() {
+        return dispatcher;
     }
 }
