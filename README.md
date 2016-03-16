@@ -23,7 +23,7 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:2.0.4'
+compile 'cn.finalteam:okhttpfinal:2.0.5'
 ```
 
 ##eclipse使用
@@ -31,6 +31,7 @@ compile 'cn.finalteam:okhttpfinal:2.0.4'
 
 ## 2.0.5更新内容
 * 添加onResponse重载方法，返回okhttp请求Response实例
+* 添加SSLSocketFactory和Dispatcher配置方法
 
 ---
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)

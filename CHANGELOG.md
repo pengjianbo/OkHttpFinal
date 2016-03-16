@@ -1,4 +1,8 @@
 # 更新日志
+# V2.0.5
+* 添加onResponse重载方法，返回okhttp请求Response实例
+* 添加SSLSocketFactory和Dispatcher配置方法
+
 # V2.0.4
 * 更新tools库，解决日志循环输出bug
 
