@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.finalteam.toolsfinal.StringUtils;
+import okhttp3.CacheControl;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -48,7 +49,7 @@ public class RequestParams {
     private boolean applicationJson;
     private boolean urlEncoder;//是否进行URL编码
     private JSONObject jsonParams;
-
+    protected CacheControl cacheControl;
     public RequestParams() {
         this(null);
     }
@@ -255,6 +256,10 @@ public class RequestParams {
 
     public boolean isUrlEncoder() {
         return urlEncoder;
+    }
+
+    public void setCacheControl(CacheControl cacheControl) {
+        this.cacheControl = cacheControl;
     }
 
     public void clear() {
