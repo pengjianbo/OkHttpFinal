@@ -62,6 +62,7 @@ public class IApplication extends Application {
                         //.setCertificates(...)
                         //.setHostnameVerifier(new SkirtHttpsHostnameVerifier())
                 .setDebug(true);
+//        addHttps(builder);
         OkHttpFinal.getInstance().init(builder.build());
     }
 
@@ -84,4 +85,36 @@ public class IApplication extends Application {
                 .build();
         GalleryFinal.init(coreConfig);
     }
+
+//    private static void addHttps( OkHttpFinalConfiguration.Builder builder){
+//        try {
+//            SSLContext sc = SSLContext.getInstance("SSL");
+//            sc.init(null, new TrustManager[]{new X509TrustManager() {
+//                @Override
+//                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//                }
+//
+//                @Override
+//                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//
+//                }
+//
+//                @Override
+//                public X509Certificate[] getAcceptedIssuers() {
+//                    return new X509Certificate[]{};
+//                }
+//            }}, new SecureRandom());
+//            builder.setSSLSocketFactory(sc.getSocketFactory());
+//            builder.setHostnameVerifier(new HostnameVerifier() {
+//                @Override
+//                public boolean verify(String hostname, SSLSession session) {
+//                    return true;
+//                }
+//            });
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

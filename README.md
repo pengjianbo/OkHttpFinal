@@ -29,9 +29,8 @@ compile 'cn.finalteam:okhttpfinal:2.0.5'
 ##eclipse使用
 下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra)
 
-## 2.0.5更新内容
-* 添加onResponse重载方法，返回okhttp请求Response实例
-* 添加SSLSocketFactory和Dispatcher配置方法
+## 2.0.6更新内容
+* RequestParams添加setCacheControl方法
 
 ---
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)

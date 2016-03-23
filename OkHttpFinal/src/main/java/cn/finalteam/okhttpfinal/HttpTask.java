@@ -129,6 +129,9 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
                     }
                     break;
             }
+            if (params.cacheControl != null) {
+                builder.cacheControl(params.cacheControl);
+            }
             builder.url(url).tag(srcUrl).headers(headers);
             Request request = builder.build();
             if (Constants.DEBUG) {
