@@ -53,23 +53,23 @@ public class HttpTask extends AsyncTask<Void, Long, ResponseData> {
     private Method method;
     private OkHttpClient okHttpClient;
 
-    public HttpTask(Method method, String url, RequestParams params, BaseHttpRequestCallback callback) {
+    public HttpTask(Method method, String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
         this.method = method;
         this.url = url;
-        this.params = params;
         this.callback = callback;
         if (params == null) {
-            this.params = params = new RequestParams();
+            this.params = new RequestParams();
+        } else {
+            this.params = params;
         }
-        this.requestKey = params.getHttpTaskKey();
+        this.requestKey = this.params.getHttpTaskKey();
         if (StringUtils.isEmpty(requestKey)) {
             requestKey = DEFAULT_HTTP_TASK_KEY;
         }
 
         //将请求的URL及参数组合成一个唯一请求
         HttpTaskHandler.getInstance().addTask(this.requestKey, this);
-
-        okHttpClient = OkHttpFinal.getInstance().getOkHttpClient();
+        okHttpClient = builder.build();
     }
 
     public String getUrl() {
