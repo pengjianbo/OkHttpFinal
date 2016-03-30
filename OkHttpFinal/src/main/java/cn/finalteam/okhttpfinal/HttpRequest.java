@@ -17,16 +17,18 @@
 package cn.finalteam.okhttpfinal;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.Call;
+import okhttp3.OkHttpClient;
 
 /**
  * Desction:http请求类
  * Author:pengjianbo
  * Date:15/9/22 下午10:17
  */
-public class HttpRequest {
+public final class HttpRequest {
 
     public static void get(String url) {
         get(url, null, null);
@@ -47,7 +49,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void get(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.GET, url, params, callback);
+        get(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void get(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.GET, url, params, builder, callback);
+    }
+
+    public static void get(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.GET, url, params, builder, callback);
     }
 
     public static void post(String url) {
@@ -69,7 +83,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void post(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.POST, url, params, callback);
+        post(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void post(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.POST, url, params, builder, callback);
+    }
+
+    public static void post(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.POST, url, params, builder, callback);
     }
 
     public static void put(String url) {
@@ -91,7 +117,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void put(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.PUT, url, params, callback);
+        put(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void put(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.PUT, url, params, builder, callback);
+    }
+
+    public static void put(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.PUT, url, params, builder, callback);
     }
 
     public static void delete(String url) {
@@ -113,7 +151,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void delete(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.DELETE, url, params, callback);
+        delete(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void delete(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.DELETE, url, params, builder, callback);
+    }
+
+    public static void delete(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.DELETE, url, params, builder, callback);
     }
 
     public static void head(String url) {
@@ -135,7 +185,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void head(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.HEAD, url, params, callback);
+        head(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void head(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.HEAD, url, params, builder, callback);
+    }
+
+    public static void head(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.HEAD, url, params, builder, callback);
     }
 
     public static void patch(String url) {
@@ -157,7 +219,19 @@ public class HttpRequest {
      * @param callback
      */
     public static void patch(String url, RequestParams params, BaseHttpRequestCallback callback) {
-        executeRequest(Method.PATCH, url, params, callback);
+        patch(url, params, Constants.REQ_TIMEOUT, callback);
+    }
+
+    public static void patch(String url, RequestParams params, long timeout, BaseHttpRequestCallback callback) {
+        OkHttpClient.Builder builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+        builder.readTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(timeout, TimeUnit.MILLISECONDS);
+        executeRequest(Method.PATCH, url, params, builder, callback);
+    }
+
+    public static void patch(String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
+        executeRequest(Method.PATCH, url, params, builder, callback);
     }
 
     /**
@@ -192,9 +266,12 @@ public class HttpRequest {
         }
     }
 
-    private static void executeRequest(Method method, String url, RequestParams params, BaseHttpRequestCallback callback) {
+    private static void executeRequest(Method method, String url, RequestParams params, OkHttpClient.Builder builder, BaseHttpRequestCallback callback) {
         if (!StringUtils.isEmpty(url)) {
-            HttpTask task = new HttpTask(method, url, params, callback);
+            if(builder == null) {
+                builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
+            }
+            HttpTask task = new HttpTask(method, url, params, builder, callback);
             task.execute();
         }
     }

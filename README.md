@@ -23,14 +23,11 @@
 下载这个[JAR](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 或者通过Gradle抓取:
 
 ```gradle
-compile 'cn.finalteam:okhttpfinal:2.0.5'
+compile 'cn.finalteam:okhttpfinal:2.0.6'
 ```
 
 ##eclipse使用
 下载OkHttpFinal对应的[Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads) 和下载依赖[Extra Jar](https://github.com/pengjianbo/OkHttpFinal/tree/master/downloads/extra)
-
-## 2.0.6更新内容
-* RequestParams添加setCacheControl方法
 
 ---
 Demo apk:![DEMO APK](images/okhttpfianl-sample-qrcode.png)

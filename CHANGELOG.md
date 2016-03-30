@@ -1,6 +1,8 @@
 # 更新日志
 # V2.0.6
 * RequestParams添加setCacheControl方法
+* HttpRequst添加多态方法，配置当前请求超时时间
+* 支持自定义OkHttpClient.Builder配置
 
 # V2.0.5
 * 添加onResponse重载方法，返回okhttp请求Response实例

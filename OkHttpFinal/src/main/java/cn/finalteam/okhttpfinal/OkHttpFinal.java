@@ -100,6 +100,7 @@ public class OkHttpFinal {
         Constants.DEBUG = configuration.isDebug();
 
         okHttpClient = builder.build();
+
     }
 
     public static OkHttpFinal getInstance() {
@@ -144,8 +145,13 @@ public class OkHttpFinal {
         configuration.commonHeaders = headers.newBuilder().set(key, value).build();
     }
 
+    @Deprecated
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
+    }
+
+    public OkHttpClient.Builder getOkHttpClientBuilder() {
+        return okHttpClient.newBuilder();
     }
 
     public List<Part> getCommonParams() {
