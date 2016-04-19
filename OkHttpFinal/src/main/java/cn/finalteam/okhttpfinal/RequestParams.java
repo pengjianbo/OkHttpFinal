@@ -340,16 +340,12 @@ public class RequestParams {
             }
         } else {
             FormBody.Builder builder = new FormBody.Builder();
-            boolean hasData = false;
             for (Part part:params){
                 String key = part.getKey();
                 String value = part.getValue();
                 builder.add(key, value);
-                hasData = true;
             }
-            if (hasData) {
-                body = builder.build();
-            }
+            body = builder.build();
         }
 
         return body;
