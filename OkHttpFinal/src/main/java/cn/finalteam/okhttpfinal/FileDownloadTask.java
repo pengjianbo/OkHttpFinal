@@ -33,7 +33,7 @@ import okhttp3.Response;
  * Author:pengjianbo
  * Date:15/12/10 下午10:45
  */
-public class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
+class FileDownloadTask extends AsyncTask<Void, Long, Boolean> {
 
     private OkHttpClient okHttpClient;
     private FileDownloadCallback callback;

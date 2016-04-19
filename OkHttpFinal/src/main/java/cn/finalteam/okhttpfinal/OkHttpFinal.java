@@ -97,6 +97,7 @@ public class OkHttpFinal {
             builder.proxy(configuration.getProxy());
         }
         ILogger.DEBUG = configuration.isDebug();
+        ILogger.d("OkHttpFinal init...");
         Constants.DEBUG = configuration.isDebug();
 
         okHttpClient = builder.build();

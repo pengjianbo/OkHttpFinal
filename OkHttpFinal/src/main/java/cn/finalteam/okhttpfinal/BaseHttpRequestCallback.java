@@ -28,10 +28,11 @@ import okhttp3.Response;
  */
 public class BaseHttpRequestCallback<T> {
 
-    public static final int ERROR_RESPONSE_NULL = 1001;
-    public static final int ERROR_RESPONSE_JSON_EXCEPTION = 1002;
+//    public static final int ERROR_RESPONSE_NULL = 1001;
+    public static final int ERROR_RESPONSE_DATA_PARSE_EXCEPTION = 1002;
     public static final int ERROR_RESPONSE_UNKNOWN = 1003;
-    public static final int ERROR_RESPONSE_TIMEOUT = 1004;
+//    public static final int ERROR_RESPONSE_TIMEOUT = 1004;
+
     protected Type type;
     protected Headers headers;
 

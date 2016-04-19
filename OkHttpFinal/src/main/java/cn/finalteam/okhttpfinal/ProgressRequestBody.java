@@ -16,9 +16,8 @@
 
 package cn.finalteam.okhttpfinal;
 
-import android.os.AsyncTask;
-
 import java.io.IOException;
+
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Buffer;
@@ -36,7 +35,7 @@ public class ProgressRequestBody extends RequestBody {
     //实际的待包装请求体
     private final RequestBody requestBody;
     //进度回调接口
-    private final HttpTask httpTask;
+    private final ProgressCallback callback;
     //包装完成的BufferedSink
     private BufferedSink bufferedSink;
     //开始时间，用户计算加载速度
@@ -45,11 +44,11 @@ public class ProgressRequestBody extends RequestBody {
     /**
      * 构造函数，赋值
      * @param requestBody 待包装的请求体
-     * @param httpTask
+     * @param callback
      */
-    public ProgressRequestBody(RequestBody requestBody, HttpTask httpTask) {
+    public ProgressRequestBody(RequestBody requestBody, ProgressCallback callback) {
         this.requestBody = requestBody;
-        this.httpTask = httpTask;
+        this.callback = callback;
     }
 
     /**
@@ -112,7 +111,7 @@ public class ProgressRequestBody extends RequestBody {
                 bytesWritten += byteCount;
 
                 //回调
-                if (httpTask!=null) {
+                if (callback!=null) {
                     //计算速度
                     long totalTime = (System.currentTimeMillis() - previousTime)/1000;
                     if ( totalTime == 0 ) {
@@ -121,7 +120,7 @@ public class ProgressRequestBody extends RequestBody {
                     long networkSpeed = bytesWritten / totalTime;
                     int progress = (int)(bytesWritten * 100 / contentLength);
                     boolean done = bytesWritten == contentLength;
-                    httpTask.updateProgress(progress, networkSpeed, done?1:0);
+                    callback.updateProgress(progress, networkSpeed, done);
                 }
             }
         };

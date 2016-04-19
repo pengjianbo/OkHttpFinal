@@ -271,7 +271,7 @@ public final class HttpRequest {
             if(builder == null) {
                 builder = OkHttpFinal.getInstance().getOkHttpClientBuilder();
             }
-            HttpTask task = new HttpTask(method, url, params, builder, callback);
+            OkHttpTask task = new OkHttpTask(method, url, params, builder, callback);
             task.execute();
         }
     }
