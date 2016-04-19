@@ -1,7 +1,8 @@
 package cn.finalteam.okhttpfinal;
 
-import cn.finalteam.toolsfinal.StringUtils;
 import java.util.concurrent.ConcurrentHashMap;
+
+import cn.finalteam.toolsfinal.StringUtils;
 import okhttp3.Call;
 
 /**
@@ -26,13 +27,13 @@ public class OkHttpCallManager {
     }
 
     public void addCall(String url, Call call) {
-        if (call != null && StringUtils.isEmpty(url)) {
+        if (call != null && !StringUtils.isEmpty(url)) {
             callMap.put(url, call);
         }
     }
 
     public Call getCall(String url) {
-        if ( StringUtils.isEmpty(url) ) {
+        if ( !StringUtils.isEmpty(url) ) {
             return callMap.get(url);
         }
 
@@ -40,7 +41,7 @@ public class OkHttpCallManager {
     }
 
     public void removeCall(String url) {
-        if ( StringUtils.isEmpty(url) ) {
+        if ( !StringUtils.isEmpty(url) ) {
             callMap.remove(url);
         }
     }
