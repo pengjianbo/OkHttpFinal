@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Author:pengjianbo
  * Date:15/9/21 下午11:33
  */
-@Deprecated
 public class HttpTaskHandler {
 
     /** 正在请求的任务集合 */
@@ -52,7 +51,6 @@ public class HttpTaskHandler {
      * 移除KEY
      * @param key
      */
-    @Deprecated
     public void removeTask(String key) {
         if (httpTaskMap.containsKey(key)) {
             //移除对应的Key

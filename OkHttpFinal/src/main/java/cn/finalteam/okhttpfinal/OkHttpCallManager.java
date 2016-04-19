@@ -10,7 +10,7 @@ import okhttp3.Call;
  * Author:pengjianbo
  * Date:16/1/3 下午1:27
  */
-public class OkHttpCallManager {
+class OkHttpCallManager {
 
     private ConcurrentHashMap<String, Call> callMap;
     private static OkHttpCallManager manager;

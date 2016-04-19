@@ -27,7 +27,7 @@ import okhttp3.Response;
  * Author:pengjianbo
  * Date:16/4/19 上午10:24
  */
-public class OkHttpTask implements Callback, ProgressCallback{
+class OkHttpTask implements Callback, ProgressCallback{
 
     private Handler handler = new Handler(Looper.getMainLooper());
     public static final String DEFAULT_HTTP_TASK_KEY = "default_http_task_key";

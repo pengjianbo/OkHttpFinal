@@ -5,6 +5,6 @@ package cn.finalteam.okhttpfinal;
  * Author:pengjianbo
  * Date:16/4/19 上午11:31
  */
-public interface ProgressCallback {
+interface ProgressCallback {
     void updateProgress(int progress, long networkSpeed, boolean done);
 }
