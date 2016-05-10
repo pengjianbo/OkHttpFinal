@@ -52,7 +52,7 @@ public class HttpRequestCallbackStringActivity extends BaseActivity {
         params.addFormDataPart("limit", 12);
         HttpRequest.post(Api.NEW_GAME, params, new StringHttpRequestCallback() {
             @Override
-            protected void onSuccess(String s) {
+            public void onSuccess(String s) {
                 super.onSuccess(s);
                 mTvResult.setText(JsonFormatUtils.formatJson(s));
             }

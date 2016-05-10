@@ -53,7 +53,7 @@ public class HttpRequestCallbackJsonActivity extends BaseActivity {
         params.addFormDataPart("limit", 12);
         HttpRequest.post(Api.NEW_GAME, params, new JsonHttpRequestCallback() {
             @Override
-            protected void onSuccess(JSONObject jsonObject) {
+            public void onSuccess(JSONObject jsonObject) {
                 super.onSuccess(jsonObject);
                 mTvResult.setText(JsonFormatUtils.formatJson(jsonObject.toJSONString()));
             }
