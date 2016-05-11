@@ -52,8 +52,8 @@ public class DownloadActivity extends BaseActivity {
 
     @OnClick(R.id.btn_download)
     public void download() {
-        String url = "http://219.128.78.33/apk.r1.market.hiapk.com/data/upload/2015/05_20/14/com.speedsoftware.rootexplorer_140220.apk";
-        HttpRequest.download(url, new File("/sdcard/rootexplorer_140220.apk"), new FileDownloadCallback() {
+        String url = "http://www.bus365.com/public/phoneClient/BUS365.apk";
+        HttpRequest.download(url, new File("/sdcard/BUS365.apk"), new FileDownloadCallback() {
             @Override public void onStart() {
                 super.onStart();
             }
