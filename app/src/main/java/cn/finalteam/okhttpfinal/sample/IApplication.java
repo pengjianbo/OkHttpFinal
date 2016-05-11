@@ -64,6 +64,7 @@ public class IApplication extends Application {
                 .setDebug(true);
 //        addHttps(builder);
         OkHttpFinal.getInstance().init(builder.build());
+        OkHttpFinal.getInstance().updateCommonHeader("Accept-Encoding", "identity");
     }
 
 
