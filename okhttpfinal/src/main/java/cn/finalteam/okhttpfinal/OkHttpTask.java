@@ -237,7 +237,7 @@ class OkHttpTask implements Callback, ProgressCallback{
                 }
 
                 if (callback != null) {
-                    callback.onFailure(code, msg);
+                    callback.onFailure(responseData.getResponse(), code, msg);
                 }
             }
         } else {
@@ -245,7 +245,7 @@ class OkHttpTask implements Callback, ProgressCallback{
                 ILogger.d("url=" + url + "\n response failure code=" + code + " msg=" + msg);
             }
             if (callback != null) {
-                callback.onFailure(code, msg);
+                callback.onFailure(responseData.getResponse(), code, msg);
             }
         }
 
@@ -314,7 +314,7 @@ class OkHttpTask implements Callback, ProgressCallback{
                 return;
             }
         }
-        //接口请求失败
-        callback.onFailure(BaseHttpRequestCallback.ERROR_RESPONSE_DATA_PARSE_EXCEPTION, "Data parse exception");
+        //接口请求失败 或 JSON返回类型与期望类型不符导致的解析异常
+        callback.onFailure(responseData.getResponse(), BaseHttpRequestCallback.ERROR_RESPONSE_DATA_PARSE_EXCEPTION, "Data parse exception");
     }
 }

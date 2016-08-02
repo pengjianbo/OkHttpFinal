@@ -68,7 +68,7 @@ public class BaseHttpRequestCallback<T> {
     public void onProgress(int progress, long networkSpeed, boolean done){
     }
 
-    public void onFailure(int errorCode, String msg) {
+    public void onFailure(String responseBody, int errorCode, String msg) {
     }
 
     public Headers getHeaders() {

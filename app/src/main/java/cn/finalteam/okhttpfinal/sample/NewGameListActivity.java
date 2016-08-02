@@ -12,6 +12,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.finalteam.okhttpfinal.BaseHttpRequestCallback;
 import cn.finalteam.okhttpfinal.HttpRequest;
 import cn.finalteam.okhttpfinal.RequestParams;
 import cn.finalteam.okhttpfinal.sample.adapter.NewGameListAdapter;
@@ -22,6 +23,7 @@ import cn.finalteam.okhttpfinal.sample.http.model.NewGameResponse;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayout;
 import cn.finalteam.okhttpfinal.sample.widget.swipeview.SwipeRefreshLayoutDirection;
 import cn.finalteam.toolsfinal.StringUtils;
+import okhttp3.Response;
 import us.feras.mdv.MarkdownView;
 
 /**
@@ -111,9 +113,13 @@ public class NewGameListActivity extends BaseActivity implements SwipeRefreshLay
             }
 
             @Override
-            public void onFailure(int errorCode, String msg) {
-                super.onFailure(errorCode, msg);
-                Toast.makeText(getBaseContext(), "网络异常", Toast.LENGTH_SHORT).show();
+            public void onFailure(String responseBody, int errorCode, String msg) {
+                super.onFailure(responseBody, errorCode, msg);
+                if (errorCode == BaseHttpRequestCallback.ERROR_RESPONSE_DATA_PARSE_EXCEPTION) {
+                    Toast.makeText(getBaseContext(), "后台返回类型与期望值不符，客户端需要做容错", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getBaseContext(), "网络异常", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override public void onFinish() {

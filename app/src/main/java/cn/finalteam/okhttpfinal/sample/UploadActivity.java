@@ -32,6 +32,7 @@ import cn.finalteam.okhttpfinal.sample.http.model.UploadResponse;
 import java.io.File;
 import java.util.List;
 
+import okhttp3.Response;
 import us.feras.mdv.MarkdownView;
 
 /**
@@ -97,8 +98,8 @@ public class UploadActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(int errorCode, String msg) {
-                super.onFailure(errorCode, msg);
+            public void onFailure(String responseBody, int errorCode, String msg) {
+                super.onFailure(responseBody, errorCode, msg);
                 Toast.makeText(getBaseContext(), "上传失败", Toast.LENGTH_SHORT).show();
             }
 
