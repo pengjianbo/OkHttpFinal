@@ -64,7 +64,7 @@ protected void onSuccess(LoginResponse loginResponse) {
 
 //请求失败（服务返回非法JSON、服务器异常、网络异常）
 @Override
-public void onFailure(int errorCode, String msg) {
+public void onFailure(String responseBody, int errorCode, String msg) {
 	toast("网络异常~，请检查你的网络是否连接后再试");
 }
  

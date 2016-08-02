@@ -18,6 +18,8 @@ package cn.finalteam.okhttpfinal.sample;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.finalteam.okhttpfinal.HttpRequest;
@@ -56,6 +58,12 @@ public class HttpRequestCallbackJsonActivity extends BaseActivity {
             protected void onSuccess(JSONObject jsonObject) {
                 super.onSuccess(jsonObject);
                 mTvResult.setText(JsonFormatUtils.formatJson(jsonObject.toJSONString()));
+            }
+
+            @Override
+            public void onFailure(String responseBody, int errorCode, String msg) {
+                super.onFailure(responseBody, errorCode, msg);
+                // 返回的类型与期望值不符 本次请求期望后台返回JSONObject，若后台返回JSONArray或其他类型，则会进入此回调方法。
             }
         });
 
