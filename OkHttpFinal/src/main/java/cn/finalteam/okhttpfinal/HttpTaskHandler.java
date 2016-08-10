@@ -54,7 +54,12 @@ public class HttpTaskHandler {
     public void removeTask(String key) {
         if (httpTaskMap.containsKey(key)) {
             //移除对应的Key
-            httpTaskMap.remove(key);
+            List<OkHttpTask> okHttpTaskList=  httpTaskMap.remove(key);
+            if(okHttpTaskList!=null){
+                for(OkHttpTask okHttpTask:okHttpTaskList){
+                    okHttpTask.cancel();
+                }
+            }
         }
     }
 
