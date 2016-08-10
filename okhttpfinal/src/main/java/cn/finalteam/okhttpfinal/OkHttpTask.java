@@ -129,10 +129,17 @@ class OkHttpTask implements Callback, ProgressCallback{
         //执行请求
         call.enqueue(this);
     }
-
+    public void cancel(){
+        //防止内存泄漏
+        HttpRequest.cancel(url);
+        this.callback=null;
+        if(params!=null){
+            this.params.httpCycleContext=null;
+            this.params=null;
+        }
+    }
     /**
      * 处理进度
-     *
      * @param progress
      * @param networkSpeed
      * @param done
